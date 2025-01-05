@@ -15,8 +15,9 @@ nlp.add_pipe("spacytextblob")
 ruler = nlp.add_pipe("entity_ruler", before="ner")
 df = pd.read_csv("data/plays/Macbeth.csv")
 
-# Get list of character names to add to NER ruleset
+# Get list of normalized character names to add to NER ruleset
 characters = df["character"].unique().tolist()
+characters_normalized = list(map(str.lower, characters))
 patterns = [{"label": "PERSON", "pattern": name} for name in characters]
 ruler.add_patterns(patterns)
 
@@ -24,31 +25,50 @@ ruler.add_patterns(patterns)
 df["entities"] = df["text"].apply(lambda x: [ent.text.translate(str.maketrans("", "", string.punctuation)) for ent in nlp(x).ents if ent.label_ == "PERSON"]).to_list()
 df_filtered = df[df["entities"].apply(len) > 0]
 
-# Organize the relationships pairwise according to a commutative/undirected (1st party, 2nd party) order
-# This is for explicit mentions by a speaker
-explicit_relations = []
-for _, row in df_filtered.iterrows():
-    cooccurrences = row["entities"]
-    speaker = row["character"]
-    for c in cooccurrences:
-        if speaker != c:
-            explicit_relations.append((speaker, c))
-explicit_relations = [tuple(pair) for pair in list(map(sorted, explicit_relations))]
+# Per scene, get scene character cast and first check for explicit mentions.
+# Then, move on to implicit relations from scene associations, making sure not to double up
+# if a speaker directly addresses a fellow scene participant
+scenes = df.groupby(["act", "scene"])
+explicit_relation_counts = Counter()
+implicit_relation_counts = Counter()
+bm_scenes = [] # scenes with Banquo and Macbeth
+for (act, scene), lines in scenes:
+    scene_chars = lines["character"].unique()
+    if "Banquo" in scene_chars and "Macbeth" in scene_chars:
+        bm_scenes.append((act, scene))
+    associations = [] # used to keep track of explicit relations in a scene when checking implicit relations
 
-# Factor in implicit relationships via scene associations. Characters within the same scene likely are related.
-scene_chars = df.groupby(["act", "scene"])["character"].unique()
-implicit_relations = []
-for char in scene_chars:
-    print(char)
-    for combo in itertools.combinations(c, 2):
-        pair = tuple(sorted(combo))
+    # Organize the relationships pairwise according to a commutative/undirected (1st party, 2nd party) order
+    # This is for explicit mentions by a speaker
+    for _, row in lines.iterrows():
+        mentioned = row["entities"]
+        speaker = row["character"]
+        for mention in mentioned:
+            if speaker != mention:
+                ordered_pair = (speaker, mention)
+                unordered_pair = tuple(sorted((speaker, mention)))
+                associations.append(unordered_pair)
+                explicit_relation_counts[unordered_pair] += 1
+
+    # Factor in implicit relationships via scene associations. Characters within the same scene likely are related.
+    for combo in itertools.combinations(scene_chars, 2):
+        ordered_pair = combo
+        unordered_pair = tuple(sorted(combo))
         # Prioritize explicit mentions over implicit scene associations
-        if pair not in explicit_relations:
-            implicit_relations.append(pair)
+        if unordered_pair not in associations:
+            associations.append(unordered_pair)
+            implicit_relation_counts[unordered_pair] += 1
 
-total_relations = implicit_relations + explicit_relations
-total_counts = Counter(total_relations)
-print(total_counts)
+total_counts = explicit_relation_counts + implicit_relation_counts
+for key, _ in sorted(total_counts.items(), key=lambda item: item[1], reverse=False):
+    print("KEY: ", key)
+    print("TOTAL: ", total_counts[key])
+    print("EXPLICIT: ", explicit_relation_counts[key])
+    print("IMPLICIT: ", implicit_relation_counts[key])
+    print("\n"*2)
 
-df_relations = pd.DataFrame(total_relations, columns=["POV", "Mentioned"])
-print(df_relations)
+print(scenes["character"].unique()) # print each scene and their explicit entities mentionec
+
+new_df = df[(df["character"] == "Banquo") & (df["text"].str.contains("Macbeth", case=False, na=False))]
+print(new_df[["character", "text", "entities"]]) # print scenes where Banquo mentions Macbeth explicitly
+print(bm_scenes) # print scenes with both Banquo and Macbeth for implicit relation testing
