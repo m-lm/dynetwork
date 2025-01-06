@@ -1,0 +1,672 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script>function neighbourhoodHighlight(params) {
+  // console.log("in nieghbourhoodhighlight");
+  allNodes = nodes.get({ returnType: "Object" });
+  // originalNodes = JSON.parse(JSON.stringify(allNodes));
+  // if something is selected:
+  if (params.nodes.length > 0) {
+    highlightActive = true;
+    var i, j;
+    var selectedNode = params.nodes[0];
+    var degrees = 2;
+
+    // mark all nodes as hard to read.
+    for (let nodeId in allNodes) {
+      // nodeColors[nodeId] = allNodes[nodeId].color;
+      allNodes[nodeId].color = "rgba(200,200,200,0.5)";
+      if (allNodes[nodeId].hiddenLabel === undefined) {
+        allNodes[nodeId].hiddenLabel = allNodes[nodeId].label;
+        allNodes[nodeId].label = undefined;
+      }
+    }
+    var connectedNodes = network.getConnectedNodes(selectedNode);
+    var allConnectedNodes = [];
+
+    // get the second degree nodes
+    for (i = 1; i < degrees; i++) {
+      for (j = 0; j < connectedNodes.length; j++) {
+        allConnectedNodes = allConnectedNodes.concat(
+          network.getConnectedNodes(connectedNodes[j])
+        );
+      }
+    }
+
+    // all second degree nodes get a different color and their label back
+    for (i = 0; i < allConnectedNodes.length; i++) {
+      // allNodes[allConnectedNodes[i]].color = "pink";
+      allNodes[allConnectedNodes[i]].color = "rgba(150,150,150,0.75)";
+      if (allNodes[allConnectedNodes[i]].hiddenLabel !== undefined) {
+        allNodes[allConnectedNodes[i]].label =
+          allNodes[allConnectedNodes[i]].hiddenLabel;
+        allNodes[allConnectedNodes[i]].hiddenLabel = undefined;
+      }
+    }
+
+    // all first degree nodes get their own color and their label back
+    for (i = 0; i < connectedNodes.length; i++) {
+      // allNodes[connectedNodes[i]].color = undefined;
+      allNodes[connectedNodes[i]].color = nodeColors[connectedNodes[i]];
+      if (allNodes[connectedNodes[i]].hiddenLabel !== undefined) {
+        allNodes[connectedNodes[i]].label =
+          allNodes[connectedNodes[i]].hiddenLabel;
+        allNodes[connectedNodes[i]].hiddenLabel = undefined;
+      }
+    }
+
+    // the main node gets its own color and its label back.
+    // allNodes[selectedNode].color = undefined;
+    allNodes[selectedNode].color = nodeColors[selectedNode];
+    if (allNodes[selectedNode].hiddenLabel !== undefined) {
+      allNodes[selectedNode].label = allNodes[selectedNode].hiddenLabel;
+      allNodes[selectedNode].hiddenLabel = undefined;
+    }
+  } else if (highlightActive === true) {
+    // console.log("highlightActive was true");
+    // reset all nodes
+    for (let nodeId in allNodes) {
+      // allNodes[nodeId].color = "purple";
+      allNodes[nodeId].color = nodeColors[nodeId];
+      // delete allNodes[nodeId].color;
+      if (allNodes[nodeId].hiddenLabel !== undefined) {
+        allNodes[nodeId].label = allNodes[nodeId].hiddenLabel;
+        allNodes[nodeId].hiddenLabel = undefined;
+      }
+    }
+    highlightActive = false;
+  }
+
+  // transform the object into an array
+  var updateArray = [];
+  if (params.nodes.length > 0) {
+    for (let nodeId in allNodes) {
+      if (allNodes.hasOwnProperty(nodeId)) {
+        // console.log(allNodes[nodeId]);
+        updateArray.push(allNodes[nodeId]);
+      }
+    }
+    nodes.update(updateArray);
+  } else {
+    // console.log("Nothing was selected");
+    for (let nodeId in allNodes) {
+      if (allNodes.hasOwnProperty(nodeId)) {
+        // console.log(allNodes[nodeId]);
+        // allNodes[nodeId].color = {};
+        updateArray.push(allNodes[nodeId]);
+      }
+    }
+    nodes.update(updateArray);
+  }
+}
+
+function filterHighlight(params) {
+  allNodes = nodes.get({ returnType: "Object" });
+  // if something is selected:
+  if (params.nodes.length > 0) {
+    filterActive = true;
+    let selectedNodes = params.nodes;
+
+    // hiding all nodes and saving the label
+    for (let nodeId in allNodes) {
+      allNodes[nodeId].hidden = true;
+      if (allNodes[nodeId].savedLabel === undefined) {
+        allNodes[nodeId].savedLabel = allNodes[nodeId].label;
+        allNodes[nodeId].label = undefined;
+      }
+    }
+
+    for (let i=0; i < selectedNodes.length; i++) {
+      allNodes[selectedNodes[i]].hidden = false;
+      if (allNodes[selectedNodes[i]].savedLabel !== undefined) {
+        allNodes[selectedNodes[i]].label = allNodes[selectedNodes[i]].savedLabel;
+        allNodes[selectedNodes[i]].savedLabel = undefined;
+      }
+    }
+
+  } else if (filterActive === true) {
+    // reset all nodes
+    for (let nodeId in allNodes) {
+      allNodes[nodeId].hidden = false;
+      if (allNodes[nodeId].savedLabel !== undefined) {
+        allNodes[nodeId].label = allNodes[nodeId].savedLabel;
+        allNodes[nodeId].savedLabel = undefined;
+      }
+    }
+    filterActive = false;
+  }
+
+  // transform the object into an array
+  var updateArray = [];
+  if (params.nodes.length > 0) {
+    for (let nodeId in allNodes) {
+      if (allNodes.hasOwnProperty(nodeId)) {
+        updateArray.push(allNodes[nodeId]);
+      }
+    }
+    nodes.update(updateArray);
+  } else {
+    for (let nodeId in allNodes) {
+      if (allNodes.hasOwnProperty(nodeId)) {
+        updateArray.push(allNodes[nodeId]);
+      }
+    }
+    nodes.update(updateArray);
+  }
+}
+
+function selectNode(nodes) {
+  network.selectNodes(nodes);
+  neighbourhoodHighlight({ nodes: nodes });
+  return nodes;
+}
+
+function selectNodes(nodes) {
+  network.selectNodes(nodes);
+  filterHighlight({nodes: nodes});
+  return nodes;
+}
+
+function highlightFilter(filter) {
+  let selectedNodes = []
+  let selectedProp = filter['property']
+  if (filter['item'] === 'node') {
+    let allNodes = nodes.get({ returnType: "Object" });
+    for (let nodeId in allNodes) {
+      if (allNodes[nodeId][selectedProp] && filter['value'].includes((allNodes[nodeId][selectedProp]).toString())) {
+        selectedNodes.push(nodeId)
+      }
+    }
+  }
+  else if (filter['item'] === 'edge'){
+    let allEdges = edges.get({returnType: 'object'});
+    // check if the selected property exists for selected edge and select the nodes connected to the edge
+    for (let edge in allEdges) {
+      if (allEdges[edge][selectedProp] && filter['value'].includes((allEdges[edge][selectedProp]).toString())) {
+        selectedNodes.push(allEdges[edge]['from'])
+        selectedNodes.push(allEdges[edge]['to'])
+      }
+    }
+  }
+  selectNodes(selectedNodes)
+}</script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+            
+            
+            
+            
+            
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tom-select/2.0.0-rc.4/css/tom-select.min.css" integrity="sha512-43fHB3GLgZfz8QXl1RPQ8O66oIgv3po9cJ5erMt1c4QISq9dYb195T3vr5ImnJPXuVroKcGBPXBFKETW8jrPNQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/tom-select/2.0.0-rc.4/js/tom-select.complete.js" integrity="sha512-jeF9CfnvzDiw9G9xiksVjxR2lib44Gnovvkv+3CgCG6NXCD4gqlA5nDAVW5WjpA+i+/zKsUWV5xNEbW1X/HH0Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 600px;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+                <div id="select-menu" class="card-header">
+                    <div class="row no-gutters">
+                        <div class="col-10 pb-2">
+                            <select
+                            class="form-select"
+                            aria-label="Default select example"
+                            onchange="selectNode([value]);"
+                            id="select-node"
+                            placeholder="Select node..."
+                            >
+                                <option selected>Select a Node by ID</option>
+                                
+                                    <option value="First Citizen">First Citizen</option>
+                                
+                                    <option value="Marcius">Marcius</option>
+                                
+                                    <option value="Second Citizen">Second Citizen</option>
+                                
+                                    <option value="Menenius">Menenius</option>
+                                
+                                    <option value="Roman">Roman</option>
+                                
+                                    <option value="Brutus">Brutus</option>
+                                
+                                    <option value="Sicinius">Sicinius</option>
+                                
+                                    <option value="Messenger">Messenger</option>
+                                
+                                    <option value="First Senator">First Senator</option>
+                                
+                                    <option value="Aufidius">Aufidius</option>
+                                
+                                    <option value="Cominius">Cominius</option>
+                                
+                                    <option value="Titus">Titus</option>
+                                
+                                    <option value="Lartius">Lartius</option>
+                                
+                                    <option value="Citizens">Citizens</option>
+                                
+                                    <option value="Second Senator">Second Senator</option>
+                                
+                                    <option value="Volumnia">Volumnia</option>
+                                
+                                    <option value="Gentlewoman">Gentlewoman</option>
+                                
+                                    <option value="Valeria">Valeria</option>
+                                
+                                    <option value="Virgilia">Virgilia</option>
+                                
+                                    <option value="Volsce">Volsce</option>
+                                
+                                    <option value="Coriolanus">Coriolanus</option>
+                                
+                                    <option value="Herald">Herald</option>
+                                
+                                    <option value="Second Officer">Second Officer</option>
+                                
+                                    <option value="Both">Both</option>
+                                
+                                    <option value="Senators">Senators</option>
+                                
+                                    <option value="Aedile">Aedile</option>
+                                
+                                    <option value="Third Servingman">Third Servingman</option>
+                                
+                                    <option value="Second Messenger">Second Messenger</option>
+                                
+                                    <option value="Second Lord">Second Lord</option>
+                                
+                                    <option value="First Soldier">First Soldier</option>
+                                
+                                    <option value="Second Soldier">Second Soldier</option>
+                                
+                                    <option value="First Roman">First Roman</option>
+                                
+                                    <option value="Second Roman">Second Roman</option>
+                                
+                                    <option value="Third Roman">Third Roman</option>
+                                
+                                    <option value="Lieutenant">Lieutenant</option>
+                                
+                                    <option value="First Officer">First Officer</option>
+                                
+                                    <option value="Officer">Officer</option>
+                                
+                                    <option value="Third Citizen">Third Citizen</option>
+                                
+                                    <option value="Fourth Citizen">Fourth Citizen</option>
+                                
+                                    <option value="Fifth Citizen">Fifth Citizen</option>
+                                
+                                    <option value="Both Citizens">Both Citizens</option>
+                                
+                                    <option value="Sixth Citizen">Sixth Citizen</option>
+                                
+                                    <option value="Seventh Citizen">Seventh Citizen</option>
+                                
+                                    <option value="All Citizens">All Citizens</option>
+                                
+                                    <option value="A Patrician">A Patrician</option>
+                                
+                                    <option value="Second Patrician">Second Patrician</option>
+                                
+                                    <option value="Both Tribunes">Both Tribunes</option>
+                                
+                                    <option value="Citizen">Citizen</option>
+                                
+                                    <option value="First Servingman">First Servingman</option>
+                                
+                                    <option value="Second Servingman">Second Servingman</option>
+                                
+                                    <option value="Young Marcius">Young Marcius</option>
+                                
+                                    <option value="First Conspirator">First Conspirator</option>
+                                
+                                    <option value="Second Conspirator">Second Conspirator</option>
+                                
+                                    <option value="Third Conspirator">Third Conspirator</option>
+                                
+                                    <option value="All The Lords">All The Lords</option>
+                                
+                                    <option value="Lords">Lords</option>
+                                
+                                    <option value="First Lord">First Lord</option>
+                                
+                                    <option value="All Conspirators">All Conspirators</option>
+                                
+                                    <option value="All The People">All The People</option>
+                                
+                                    <option value="Third Lord">Third Lord</option>
+                                
+                            </select>
+                        </div>
+                        <div class="col-2 pb-2">
+                            <button type="button" class="btn btn-primary btn-block" onclick="neighbourhoodHighlight({nodes: []});">Reset Selection</button>
+                        </div>
+                    </div>
+                </div>
+            
+            
+              <div id="filter-menu" class="card-header">
+                <div class="row no-gutters">
+                  <div class="col-3 pb-2">
+                    <select
+                            class="form-select"
+                            aria-label="Default select example"
+                            onchange="updateFilter(value, 'item')"
+                            id="select-item"
+                        >
+                        <option value="">Select a network item</option>
+                        <option value="edge">edge</option>
+                        <option value="node">node</option>
+                    </select>
+                  </div>
+                  <div class="col-3 pb-2">
+                    <select
+                            class="form-select"
+                            aria-label="Default select example"
+                            onchange="updateFilter(value, 'property')"
+                            id="select-property"
+                        >
+                        <option value="">Select a property...</option>
+                    </select>
+                  </div>
+                  <div class="col-3 pb-2">
+                    <select
+                            class="form-select"
+                            aria-label="Default select example"
+                            id="select-value"
+                        >
+                        <option value="">Select value(s)...</option>
+                    </select>
+                  </div>
+                  <div class="col-1 pb-2">
+                    <button type="button" class="btn btn-primary btn-block" onclick="highlightFilter(filter);">Filter</button>
+                  </div>
+                  <div class="col-2 pb-2">
+                    <button type="button" class="btn btn-primary btn-block" onclick="clearFilter(true)">Reset Selection</button>
+                  </div>
+                </div>
+              </div>
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+                  new TomSelect("#select-node",{
+                      create: false,
+                      sortField: {
+                          field: "text",
+                          direction: "asc"
+                      }
+                  });
+              
+
+              
+                  // explicitly using onItemAdd and this function as we need to save multiple values
+                  let updateValueFilter = function() {
+                      return function () {
+                      filter['value'].push(arguments[0])
+                      }
+                  }
+
+                  let valueControl = new TomSelect("#select-value",{
+                      maxItems: null,
+                      valueField: 'id',
+                      labelField: 'title',
+                      searchField: 'title',
+                      create: false,
+                      sortField: {
+                          field: "text",
+                          direction: "asc"
+                      },
+                      onItemAdd: updateValueFilter()
+                  });
+
+                  let addValues = function() {
+                      return function () {
+                          // clear the current value options and add the selected attribute values
+                          // tom-select handles duplicates
+                          let selectedProperty = arguments[0];
+                          valueControl.clear();
+                          valueControl.clearOptions();
+                          filter['value'] = []
+                          if (filter['item'] === 'node') {
+                              for (let each in allNodes) {
+                                  valueControl.addOption({
+                                      id:allNodes[each][selectedProperty],
+                                      title:allNodes[each][selectedProperty]
+                                  })
+                              }
+                          }
+                          else if (filter['item'] === 'edge') {
+                              for (let each in allEdges) {
+                                  valueControl.addOption({
+                                      id:allEdges[each][selectedProperty],
+                                      title:allEdges[each][selectedProperty]
+                                  })
+                              }
+                          }
+                      }
+                  };
+
+                  let propControl = new TomSelect("#select-property",{
+                      valueField: 'id',
+                      labelField: 'title',
+                      searchField: 'title',
+                      create: false,
+                      sortField: {
+                          field: "text",
+                          direction: "asc"
+                      },
+                      onItemAdd: addValues()
+                  });
+
+                  let addProperties = function() {
+                      return function () {
+                          // loops through the selected network item and adds the attributes to dropdown
+                          // tom-select handles duplicates
+                          clearFilter(false)
+                          if (arguments[0] === 'edge') {
+                              for (let each in allEdges) {
+                                  if (allEdges.hasOwnProperty(each)) {
+                                      for (let eachProp in allEdges[each]) {
+                                          if (allEdges[each].hasOwnProperty(eachProp)) {
+                                              propControl.addOption({id: eachProp, title: eachProp})
+                                          }
+                                      }
+                                  }
+                              }
+                          }
+                          else if (arguments[0] === 'node') {
+                              for (let each in allNodes) {
+                                  if (allNodes.hasOwnProperty(each)) {
+                                      for (let eachProp in allNodes[each]) {
+                                          if (allNodes[each].hasOwnProperty(eachProp)
+                                              && (eachProp !== 'hidden' && eachProp !== 'savedLabel'
+                                                  && eachProp !== 'hiddenLabel')) {
+                                              propControl.addOption({id: eachProp, title: eachProp})
+
+                                          }
+                                      }
+                                  }
+                              }
+                          }
+                      }
+                  };
+
+                  let itemControl = new TomSelect("#select-item",{
+                      create: false,
+                      sortField:{
+                          field: "text",
+                          direction: "asc"
+                      },
+                      onItemAdd: addProperties()
+                  });
+
+                  function clearFilter(reset) {
+                      // utility function to clear all the selected filter options
+                      // if reset is set to true, the existing filter will be removed
+                      // else, only the dropdown options are cleared
+                      propControl.clear();
+                      propControl.clearOptions();
+                      valueControl.clear();
+                      valueControl.clearOptions();
+                      filter = {
+                          item : '',
+                          property : '',
+                          value : []
+                      }
+                      if (reset) {
+                          itemControl.clear();
+                          filterHighlight({nodes: []})
+                      }
+                  }
+
+                  function updateFilter(value, key) {
+                      // key could be 'item' or 'property' and value is as selected in dropdown
+                      filter[key] = value
+                  }
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#97c2fc", "id": "First Citizen", "label": "First Citizen", "shape": "dot", "size": 25}, {"color": "#97c2fc", "id": "Marcius", "label": "Marcius", "shape": "dot", "size": 23}, {"color": "#97c2fc", "id": "Second Citizen", "label": "Second Citizen", "shape": "dot", "size": 21}, {"color": "#97c2fc", "id": "Menenius", "label": "Menenius", "shape": "dot", "size": 36}, {"color": "#97c2fc", "id": "Roman", "label": "Roman", "shape": "dot", "size": 11}, {"color": "#97c2fc", "id": "Brutus", "label": "Brutus", "shape": "dot", "size": 34}, {"color": "#97c2fc", "id": "Sicinius", "label": "Sicinius", "shape": "dot", "size": 34}, {"color": "#97c2fc", "id": "Messenger", "label": "Messenger", "shape": "dot", "size": 25}, {"color": "#97c2fc", "id": "First Senator", "label": "First Senator", "shape": "dot", "size": 26}, {"color": "#97c2fc", "id": "Aufidius", "label": "Aufidius", "shape": "dot", "size": 30}, {"color": "#97c2fc", "id": "Cominius", "label": "Cominius", "shape": "dot", "size": 30}, {"color": "#97c2fc", "id": "Titus", "label": "Titus", "shape": "dot", "size": 12}, {"color": "#97c2fc", "id": "Lartius", "label": "Lartius", "shape": "dot", "size": 24}, {"color": "#97c2fc", "id": "Citizens", "label": "Citizens", "shape": "dot", "size": 25}, {"color": "#97c2fc", "id": "Second Senator", "label": "Second Senator", "shape": "dot", "size": 13}, {"color": "#97c2fc", "id": "Volumnia", "label": "Volumnia", "shape": "dot", "size": 18}, {"color": "#97c2fc", "id": "Gentlewoman", "label": "Gentlewoman", "shape": "dot", "size": 3}, {"color": "#97c2fc", "id": "Valeria", "label": "Valeria", "shape": "dot", "size": 14}, {"color": "#97c2fc", "id": "Virgilia", "label": "Virgilia", "shape": "dot", "size": 13}, {"color": "#97c2fc", "id": "Volsce", "label": "Volsce", "shape": "dot", "size": 4}, {"color": "#97c2fc", "id": "Coriolanus", "label": "Coriolanus", "shape": "dot", "size": 50}, {"color": "#97c2fc", "id": "Herald", "label": "Herald", "shape": "dot", "size": 11}, {"color": "#97c2fc", "id": "Second Officer", "label": "Second Officer", "shape": "dot", "size": 9}, {"color": "#97c2fc", "id": "Both", "label": "Both", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Senators", "label": "Senators", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Aedile", "label": "Aedile", "shape": "dot", "size": 18}, {"color": "#97c2fc", "id": "Third Servingman", "label": "Third Servingman", "shape": "dot", "size": 6}, {"color": "#97c2fc", "id": "Second Messenger", "label": "Second Messenger", "shape": "dot", "size": 13}, {"color": "#97c2fc", "id": "Second Lord", "label": "Second Lord", "shape": "dot", "size": 11}, {"color": "#97c2fc", "id": "First Soldier", "label": "First Soldier", "shape": "dot", "size": 6}, {"color": "#97c2fc", "id": "Second Soldier", "label": "Second Soldier", "shape": "dot", "size": 5}, {"color": "#97c2fc", "id": "First Roman", "label": "First Roman", "shape": "dot", "size": 4}, {"color": "#97c2fc", "id": "Second Roman", "label": "Second Roman", "shape": "dot", "size": 4}, {"color": "#97c2fc", "id": "Third Roman", "label": "Third Roman", "shape": "dot", "size": 4}, {"color": "#97c2fc", "id": "Lieutenant", "label": "Lieutenant", "shape": "dot", "size": 2}, {"color": "#97c2fc", "id": "First Officer", "label": "First Officer", "shape": "dot", "size": 9}, {"color": "#97c2fc", "id": "Officer", "label": "Officer", "shape": "dot", "size": 9}, {"color": "#97c2fc", "id": "Third Citizen", "label": "Third Citizen", "shape": "dot", "size": 18}, {"color": "#97c2fc", "id": "Fourth Citizen", "label": "Fourth Citizen", "shape": "dot", "size": 13}, {"color": "#97c2fc", "id": "Fifth Citizen", "label": "Fifth Citizen", "shape": "dot", "size": 13}, {"color": "#97c2fc", "id": "Both Citizens", "label": "Both Citizens", "shape": "dot", "size": 13}, {"color": "#97c2fc", "id": "Sixth Citizen", "label": "Sixth Citizen", "shape": "dot", "size": 13}, {"color": "#97c2fc", "id": "Seventh Citizen", "label": "Seventh Citizen", "shape": "dot", "size": 13}, {"color": "#97c2fc", "id": "All Citizens", "label": "All Citizens", "shape": "dot", "size": 13}, {"color": "#97c2fc", "id": "A Patrician", "label": "A Patrician", "shape": "dot", "size": 13}, {"color": "#97c2fc", "id": "Second Patrician", "label": "Second Patrician", "shape": "dot", "size": 12}, {"color": "#97c2fc", "id": "Both Tribunes", "label": "Both Tribunes", "shape": "dot", "size": 13}, {"color": "#97c2fc", "id": "Citizen", "label": "Citizen", "shape": "dot", "size": 1}, {"color": "#97c2fc", "id": "First Servingman", "label": "First Servingman", "shape": "dot", "size": 4}, {"color": "#97c2fc", "id": "Second Servingman", "label": "Second Servingman", "shape": "dot", "size": 4}, {"color": "#97c2fc", "id": "Young Marcius", "label": "Young Marcius", "shape": "dot", "size": 4}, {"color": "#97c2fc", "id": "First Conspirator", "label": "First Conspirator", "shape": "dot", "size": 11}, {"color": "#97c2fc", "id": "Second Conspirator", "label": "Second Conspirator", "shape": "dot", "size": 11}, {"color": "#97c2fc", "id": "Third Conspirator", "label": "Third Conspirator", "shape": "dot", "size": 11}, {"color": "#97c2fc", "id": "All The Lords", "label": "All The Lords", "shape": "dot", "size": 11}, {"color": "#97c2fc", "id": "Lords", "label": "Lords", "shape": "dot", "size": 11}, {"color": "#97c2fc", "id": "First Lord", "label": "First Lord", "shape": "dot", "size": 11}, {"color": "#97c2fc", "id": "All Conspirators", "label": "All Conspirators", "shape": "dot", "size": 11}, {"color": "#97c2fc", "id": "All The People", "label": "All The People", "shape": "dot", "size": 11}, {"color": "#97c2fc", "id": "Third Lord", "label": "Third Lord", "shape": "dot", "size": 11}]);
+                  edges = new vis.DataSet([{"from": "First Citizen", "to": "Marcius", "width": 1}, {"from": "First Citizen", "to": "Second Citizen", "width": 3}, {"from": "First Citizen", "to": "Menenius", "width": 4}, {"from": "First Citizen", "to": "Messenger", "width": 2}, {"from": "First Citizen", "to": "First Senator", "width": 2}, {"from": "First Citizen", "to": "Titus", "width": 1}, {"from": "First Citizen", "to": "Sicinius", "width": 4}, {"from": "First Citizen", "to": "Third Citizen", "width": 2}, {"from": "First Citizen", "to": "Fourth Citizen", "width": 1}, {"from": "First Citizen", "to": "Sixth Citizen", "width": 1}, {"from": "First Citizen", "to": "Seventh Citizen", "width": 1}, {"from": "First Citizen", "to": "Lartius", "width": 1}, {"from": "First Citizen", "to": "Second Senator", "width": 1}, {"from": "First Citizen", "to": "Second Patrician", "width": 1}, {"from": "First Citizen", "to": "Second Messenger", "width": 1}, {"from": "Marcius", "to": "Second Citizen", "width": 1}, {"from": "Marcius", "to": "Menenius", "width": 15}, {"from": "Marcius", "to": "Sicinius", "width": 7}, {"from": "Marcius", "to": "Messenger", "width": 5}, {"from": "Marcius", "to": "Titus", "width": 4}, {"from": "Marcius", "to": "Volumnia", "width": 4}, {"from": "Marcius", "to": "Volsce", "width": 1}, {"from": "Marcius", "to": "Third Servingman", "width": 1}, {"from": "Marcius", "to": "Second Messenger", "width": 2}, {"from": "Marcius", "to": "Second Soldier", "width": 1}, {"from": "Marcius", "to": "Second Roman", "width": 1}, {"from": "Marcius", "to": "Third Roman", "width": 1}, {"from": "Second Citizen", "to": "Titus", "width": 1}, {"from": "Second Citizen", "to": "Sicinius", "width": 3}, {"from": "Second Citizen", "to": "Third Citizen", "width": 2}, {"from": "Second Citizen", "to": "Sixth Citizen", "width": 1}, {"from": "Second Citizen", "to": "Seventh Citizen", "width": 1}, {"from": "Second Citizen", "to": "Second Messenger", "width": 1}, {"from": "Menenius", "to": "Second Citizen", "width": 3}, {"from": "Menenius", "to": "Roman", "width": 1}, {"from": "Menenius", "to": "Sicinius", "width": 11}, {"from": "Menenius", "to": "Volumnia", "width": 7}, {"from": "Menenius", "to": "Titus", "width": 2}, {"from": "Menenius", "to": "Messenger", "width": 4}, {"from": "Menenius", "to": "Virgilia", "width": 3}, {"from": "Menenius", "to": "Valeria", "width": 1}, {"from": "Menenius", "to": "Second Officer", "width": 1}, {"from": "Menenius", "to": "Officer", "width": 1}, {"from": "Menenius", "to": "Senators", "width": 1}, {"from": "Menenius", "to": "Third Citizen", "width": 2}, {"from": "Menenius", "to": "Sixth Citizen", "width": 1}, {"from": "Menenius", "to": "Seventh Citizen", "width": 1}, {"from": "Menenius", "to": "Second Senator", "width": 2}, {"from": "Menenius", "to": "Second Patrician", "width": 1}, {"from": "Menenius", "to": "Second Messenger", "width": 2}, {"from": "Roman", "to": "Valeria", "width": 1}, {"from": "Roman", "to": "Third Servingman", "width": 1}, {"from": "Roman", "to": "Volsce", "width": 1}, {"from": "Brutus", "to": "Marcius", "width": 10}, {"from": "Brutus", "to": "Cominius", "width": 7}, {"from": "Brutus", "to": "Citizens", "width": 4}, {"from": "Brutus", "to": "Menenius", "width": 9}, {"from": "Brutus", "to": "Coriolanus", "width": 6}, {"from": "Brutus", "to": "First Citizen", "width": 4}, {"from": "Brutus", "to": "Second Citizen", "width": 3}, {"from": "Brutus", "to": "Messenger", "width": 3}, {"from": "Brutus", "to": "First Senator", "width": 4}, {"from": "Brutus", "to": "Titus", "width": 1}, {"from": "Brutus", "to": "Sicinius", "width": 9}, {"from": "Brutus", "to": "Volumnia", "width": 2}, {"from": "Brutus", "to": "Virgilia", "width": 2}, {"from": "Brutus", "to": "Valeria", "width": 1}, {"from": "Brutus", "to": "Herald", "width": 1}, {"from": "Brutus", "to": "First Officer", "width": 1}, {"from": "Brutus", "to": "Second Officer", "width": 1}, {"from": "Brutus", "to": "Officer", "width": 1}, {"from": "Brutus", "to": "Senators", "width": 1}, {"from": "Brutus", "to": "Third Citizen", "width": 2}, {"from": "Brutus", "to": "Fourth Citizen", "width": 1}, {"from": "Brutus", "to": "Fifth Citizen", "width": 1}, {"from": "Brutus", "to": "Sixth Citizen", "width": 1}, {"from": "Brutus", "to": "Seventh Citizen", "width": 1}, {"from": "Brutus", "to": "Lartius", "width": 1}, {"from": "Brutus", "to": "Second Senator", "width": 1}, {"from": "Brutus", "to": "Second Patrician", "width": 1}, {"from": "Brutus", "to": "Second Messenger", "width": 1}, {"from": "Sicinius", "to": "Titus", "width": 1}, {"from": "Sicinius", "to": "Volumnia", "width": 2}, {"from": "Sicinius", "to": "Virgilia", "width": 2}, {"from": "Sicinius", "to": "Valeria", "width": 1}, {"from": "Sicinius", "to": "Third Citizen", "width": 2}, {"from": "Sicinius", "to": "Sixth Citizen", "width": 1}, {"from": "Messenger", "to": "Roman", "width": 1}, {"from": "Messenger", "to": "Second Citizen", "width": 2}, {"from": "Messenger", "to": "Titus", "width": 1}, {"from": "Messenger", "to": "Sicinius", "width": 4}, {"from": "Messenger", "to": "Second Soldier", "width": 1}, {"from": "Messenger", "to": "Volumnia", "width": 1}, {"from": "Messenger", "to": "Virgilia", "width": 1}, {"from": "Messenger", "to": "Valeria", "width": 1}, {"from": "Messenger", "to": "Second Messenger", "width": 2}, {"from": "Messenger", "to": "Third Citizen", "width": 1}, {"from": "First Senator", "to": "Marcius", "width": 4}, {"from": "First Senator", "to": "Roman", "width": 1}, {"from": "First Senator", "to": "Menenius", "width": 6}, {"from": "First Senator", "to": "Second Citizen", "width": 1}, {"from": "First Senator", "to": "Messenger", "width": 2}, {"from": "First Senator", "to": "Titus", "width": 1}, {"from": "First Senator", "to": "Sicinius", "width": 4}, {"from": "First Senator", "to": "Second Senator", "width": 3}, {"from": "First Senator", "to": "Lartius", "width": 2}, {"from": "First Senator", "to": "First Soldier", "width": 1}, {"from": "First Senator", "to": "Second Soldier", "width": 1}, {"from": "First Senator", "to": "Second Officer", "width": 1}, {"from": "First Senator", "to": "Officer", "width": 1}, {"from": "First Senator", "to": "Senators", "width": 1}, {"from": "First Senator", "to": "Second Patrician", "width": 1}, {"from": "First Senator", "to": "Volumnia", "width": 1}, {"from": "Aufidius", "to": "Marcius", "width": 19}, {"from": "Aufidius", "to": "First Senator", "width": 3}, {"from": "Aufidius", "to": "Cominius", "width": 3}, {"from": "Aufidius", "to": "Titus", "width": 1}, {"from": "Aufidius", "to": "Lartius", "width": 1}, {"from": "Aufidius", "to": "Roman", "width": 4}, {"from": "Aufidius", "to": "Second Senator", "width": 2}, {"from": "Aufidius", "to": "Volumnia", "width": 4}, {"from": "Aufidius", "to": "Virgilia", "width": 2}, {"from": "Aufidius", "to": "Coriolanus", "width": 11}, {"from": "Aufidius", "to": "Volsce", "width": 1}, {"from": "Aufidius", "to": "Menenius", "width": 5}, {"from": "Aufidius", "to": "Messenger", "width": 1}, {"from": "Aufidius", "to": "Second Messenger", "width": 1}, {"from": "Aufidius", "to": "Second Lord", "width": 2}, {"from": "Aufidius", "to": "First Soldier", "width": 1}, {"from": "Aufidius", "to": "First Servingman", "width": 1}, {"from": "Aufidius", "to": "Second Servingman", "width": 1}, {"from": "Aufidius", "to": "Third Servingman", "width": 1}, {"from": "Aufidius", "to": "Lieutenant", "width": 1}, {"from": "Aufidius", "to": "Young Marcius", "width": 1}, {"from": "Aufidius", "to": "First Conspirator", "width": 1}, {"from": "Aufidius", "to": "Second Conspirator", "width": 1}, {"from": "Aufidius", "to": "Third Conspirator", "width": 1}, {"from": "Aufidius", "to": "Lords", "width": 1}, {"from": "Aufidius", "to": "First Lord", "width": 1}, {"from": "Aufidius", "to": "Third Lord", "width": 1}, {"from": "Cominius", "to": "First Senator", "width": 5}, {"from": "Cominius", "to": "Marcius", "width": 8}, {"from": "Cominius", "to": "Sicinius", "width": 8}, {"from": "Cominius", "to": "Valeria", "width": 2}, {"from": "Cominius", "to": "Roman", "width": 2}, {"from": "Cominius", "to": "Titus", "width": 4}, {"from": "Cominius", "to": "Lartius", "width": 3}, {"from": "Cominius", "to": "Menenius", "width": 13}, {"from": "Cominius", "to": "Coriolanus", "width": 8}, {"from": "Cominius", "to": "Volumnia", "width": 3}, {"from": "Cominius", "to": "First Citizen", "width": 3}, {"from": "Cominius", "to": "Second Citizen", "width": 2}, {"from": "Cominius", "to": "Messenger", "width": 4}, {"from": "Cominius", "to": "Virgilia", "width": 2}, {"from": "Cominius", "to": "Herald", "width": 1}, {"from": "Cominius", "to": "First Officer", "width": 1}, {"from": "Cominius", "to": "Second Officer", "width": 1}, {"from": "Cominius", "to": "Officer", "width": 1}, {"from": "Cominius", "to": "Senators", "width": 1}, {"from": "Cominius", "to": "Second Senator", "width": 1}, {"from": "Cominius", "to": "Second Patrician", "width": 1}, {"from": "Cominius", "to": "Second Messenger", "width": 1}, {"from": "Cominius", "to": "Third Citizen", "width": 1}, {"from": "Titus", "to": "Valeria", "width": 1}, {"from": "Titus", "to": "Volumnia", "width": 1}, {"from": "Lartius", "to": "Marcius", "width": 6}, {"from": "Lartius", "to": "Valeria", "width": 1}, {"from": "Lartius", "to": "Messenger", "width": 2}, {"from": "Lartius", "to": "Roman", "width": 1}, {"from": "Lartius", "to": "Volumnia", "width": 1}, {"from": "Lartius", "to": "Menenius", "width": 2}, {"from": "Lartius", "to": "Second Soldier", "width": 1}, {"from": "Lartius", "to": "Second Roman", "width": 1}, {"from": "Lartius", "to": "Third Roman", "width": 1}, {"from": "Lartius", "to": "Lieutenant", "width": 1}, {"from": "Lartius", "to": "Sicinius", "width": 1}, {"from": "Lartius", "to": "Second Senator", "width": 1}, {"from": "Lartius", "to": "Second Patrician", "width": 1}, {"from": "Citizens", "to": "First Senator", "width": 3}, {"from": "Citizens", "to": "Senators", "width": 1}, {"from": "Citizens", "to": "Sicinius", "width": 4}, {"from": "Citizens", "to": "Coriolanus", "width": 3}, {"from": "Citizens", "to": "Marcius", "width": 1}, {"from": "Citizens", "to": "First Citizen", "width": 3}, {"from": "Citizens", "to": "Second Citizen", "width": 2}, {"from": "Citizens", "to": "Third Citizen", "width": 2}, {"from": "Citizens", "to": "Menenius", "width": 4}, {"from": "Citizens", "to": "Fourth Citizen", "width": 1}, {"from": "Citizens", "to": "Fifth Citizen", "width": 1}, {"from": "Citizens", "to": "Sixth Citizen", "width": 1}, {"from": "Citizens", "to": "Seventh Citizen", "width": 1}, {"from": "Citizens", "to": "Lartius", "width": 1}, {"from": "Citizens", "to": "Cominius", "width": 3}, {"from": "Citizens", "to": "Second Senator", "width": 1}, {"from": "Citizens", "to": "Second Patrician", "width": 1}, {"from": "Citizens", "to": "Messenger", "width": 1}, {"from": "Citizens", "to": "Second Messenger", "width": 1}, {"from": "Second Senator", "to": "Sicinius", "width": 1}, {"from": "Volumnia", "to": "Young Marcius", "width": 1}, {"from": "Gentlewoman", "to": "Valeria", "width": 1}, {"from": "Gentlewoman", "to": "Volumnia", "width": 1}, {"from": "Gentlewoman", "to": "Virgilia", "width": 1}, {"from": "Valeria", "to": "Volumnia", "width": 2}, {"from": "Valeria", "to": "Virgilia", "width": 2}, {"from": "Virgilia", "to": "Volumnia", "width": 5}, {"from": "Virgilia", "to": "Young Marcius", "width": 1}, {"from": "Coriolanus", "to": "Herald", "width": 2}, {"from": "Coriolanus", "to": "Menenius", "width": 13}, {"from": "Coriolanus", "to": "Second Officer", "width": 2}, {"from": "Coriolanus", "to": "First Senator", "width": 6}, {"from": "Coriolanus", "to": "Senators", "width": 2}, {"from": "Coriolanus", "to": "Sicinius", "width": 6}, {"from": "Coriolanus", "to": "Marcius", "width": 4}, {"from": "Coriolanus", "to": "Roman", "width": 2}, {"from": "Coriolanus", "to": "Volsce", "width": 1}, {"from": "Coriolanus", "to": "Second Senator", "width": 2}, {"from": "Coriolanus", "to": "Valeria", "width": 2}, {"from": "Coriolanus", "to": "Volumnia", "width": 4}, {"from": "Coriolanus", "to": "Lartius", "width": 2}, {"from": "Coriolanus", "to": "Virgilia", "width": 3}, {"from": "Coriolanus", "to": "Messenger", "width": 1}, {"from": "Coriolanus", "to": "First Officer", "width": 1}, {"from": "Coriolanus", "to": "Officer", "width": 1}, {"from": "Coriolanus", "to": "First Citizen", "width": 2}, {"from": "Coriolanus", "to": "Second Citizen", "width": 1}, {"from": "Coriolanus", "to": "Third Citizen", "width": 1}, {"from": "Coriolanus", "to": "Fourth Citizen", "width": 1}, {"from": "Coriolanus", "to": "Fifth Citizen", "width": 1}, {"from": "Coriolanus", "to": "Sixth Citizen", "width": 1}, {"from": "Coriolanus", "to": "Seventh Citizen", "width": 1}, {"from": "Coriolanus", "to": "Second Patrician", "width": 1}, {"from": "Coriolanus", "to": "First Servingman", "width": 1}, {"from": "Coriolanus", "to": "Second Servingman", "width": 1}, {"from": "Coriolanus", "to": "Third Servingman", "width": 1}, {"from": "Coriolanus", "to": "Young Marcius", "width": 1}, {"from": "Coriolanus", "to": "First Conspirator", "width": 1}, {"from": "Coriolanus", "to": "Second Conspirator", "width": 1}, {"from": "Coriolanus", "to": "Third Conspirator", "width": 1}, {"from": "Coriolanus", "to": "Lords", "width": 1}, {"from": "Coriolanus", "to": "First Lord", "width": 1}, {"from": "Coriolanus", "to": "Second Lord", "width": 1}, {"from": "Coriolanus", "to": "Third Lord", "width": 1}, {"from": "Herald", "to": "Marcius", "width": 2}, {"from": "Herald", "to": "Menenius", "width": 1}, {"from": "Herald", "to": "Sicinius", "width": 1}, {"from": "Herald", "to": "Volumnia", "width": 1}, {"from": "Herald", "to": "Virgilia", "width": 1}, {"from": "Herald", "to": "Valeria", "width": 1}, {"from": "Herald", "to": "Messenger", "width": 1}, {"from": "Second Officer", "to": "Sicinius", "width": 1}, {"from": "Second Officer", "to": "Senators", "width": 1}, {"from": "Both", "to": "Cominius", "width": 2}, {"from": "Both", "to": "Menenius", "width": 1}, {"from": "Both", "to": "Brutus", "width": 1}, {"from": "Both", "to": "Sicinius", "width": 1}, {"from": "Both", "to": "Volumnia", "width": 1}, {"from": "Both", "to": "Virgilia", "width": 1}, {"from": "Both", "to": "Valeria", "width": 1}, {"from": "Both", "to": "Herald", "width": 1}, {"from": "Both", "to": "Coriolanus", "width": 1}, {"from": "Both", "to": "Messenger", "width": 1}, {"from": "Senators", "to": "Sicinius", "width": 1}, {"from": "Aedile", "to": "Menenius", "width": 3}, {"from": "Aedile", "to": "Roman", "width": 1}, {"from": "Aedile", "to": "Coriolanus", "width": 2}, {"from": "Aedile", "to": "Lartius", "width": 1}, {"from": "Aedile", "to": "Cominius", "width": 3}, {"from": "Aedile", "to": "Sicinius", "width": 3}, {"from": "Aedile", "to": "Brutus", "width": 3}, {"from": "Aedile", "to": "First Senator", "width": 2}, {"from": "Aedile", "to": "Citizens", "width": 3}, {"from": "Aedile", "to": "Second Senator", "width": 1}, {"from": "Aedile", "to": "Second Patrician", "width": 1}, {"from": "Aedile", "to": "First Citizen", "width": 2}, {"from": "Aedile", "to": "Both Tribunes", "width": 2}, {"from": "Aedile", "to": "Messenger", "width": 1}, {"from": "Aedile", "to": "Second Messenger", "width": 1}, {"from": "Aedile", "to": "Second Citizen", "width": 1}, {"from": "Aedile", "to": "Third Citizen", "width": 1}, {"from": "Second Messenger", "to": "Sicinius", "width": 2}, {"from": "Second Messenger", "to": "Third Citizen", "width": 1}, {"from": "Second Lord", "to": "Third Conspirator", "width": 1}, {"from": "Second Lord", "to": "Third Lord", "width": 1}, {"from": "First Soldier", "to": "Marcius", "width": 1}, {"from": "First Soldier", "to": "Lartius", "width": 1}, {"from": "First Soldier", "to": "Messenger", "width": 1}, {"from": "First Soldier", "to": "Second Soldier", "width": 1}, {"from": "First Roman", "to": "Second Roman", "width": 1}, {"from": "First Roman", "to": "Third Roman", "width": 1}, {"from": "First Roman", "to": "Marcius", "width": 1}, {"from": "First Roman", "to": "Lartius", "width": 1}, {"from": "Second Roman", "to": "Third Roman", "width": 1}, {"from": "First Officer", "to": "Second Officer", "width": 1}, {"from": "First Officer", "to": "Menenius", "width": 1}, {"from": "First Officer", "to": "First Senator", "width": 1}, {"from": "First Officer", "to": "Sicinius", "width": 1}, {"from": "First Officer", "to": "Officer", "width": 1}, {"from": "First Officer", "to": "Senators", "width": 1}, {"from": "Officer", "to": "Second Officer", "width": 1}, {"from": "Officer", "to": "Sicinius", "width": 1}, {"from": "Officer", "to": "Senators", "width": 1}, {"from": "Fourth Citizen", "to": "Second Citizen", "width": 1}, {"from": "Fourth Citizen", "to": "Third Citizen", "width": 1}, {"from": "Fourth Citizen", "to": "Menenius", "width": 1}, {"from": "Fourth Citizen", "to": "Sixth Citizen", "width": 1}, {"from": "Fourth Citizen", "to": "Seventh Citizen", "width": 1}, {"from": "Fourth Citizen", "to": "Sicinius", "width": 1}, {"from": "Fifth Citizen", "to": "First Citizen", "width": 1}, {"from": "Fifth Citizen", "to": "Second Citizen", "width": 1}, {"from": "Fifth Citizen", "to": "Third Citizen", "width": 1}, {"from": "Fifth Citizen", "to": "Menenius", "width": 1}, {"from": "Fifth Citizen", "to": "Fourth Citizen", "width": 1}, {"from": "Fifth Citizen", "to": "Sixth Citizen", "width": 1}, {"from": "Fifth Citizen", "to": "Seventh Citizen", "width": 1}, {"from": "Fifth Citizen", "to": "Sicinius", "width": 1}, {"from": "Both Citizens", "to": "First Citizen", "width": 1}, {"from": "Both Citizens", "to": "Second Citizen", "width": 1}, {"from": "Both Citizens", "to": "Third Citizen", "width": 1}, {"from": "Both Citizens", "to": "Menenius", "width": 1}, {"from": "Both Citizens", "to": "Coriolanus", "width": 1}, {"from": "Both Citizens", "to": "Fourth Citizen", "width": 1}, {"from": "Both Citizens", "to": "Fifth Citizen", "width": 1}, {"from": "Both Citizens", "to": "Sixth Citizen", "width": 1}, {"from": "Both Citizens", "to": "Seventh Citizen", "width": 1}, {"from": "Both Citizens", "to": "Sicinius", "width": 1}, {"from": "Both Citizens", "to": "Brutus", "width": 1}, {"from": "Both Citizens", "to": "Citizens", "width": 1}, {"from": "Sixth Citizen", "to": "Third Citizen", "width": 1}, {"from": "Seventh Citizen", "to": "Third Citizen", "width": 1}, {"from": "Seventh Citizen", "to": "Sixth Citizen", "width": 1}, {"from": "Seventh Citizen", "to": "Sicinius", "width": 1}, {"from": "All Citizens", "to": "First Citizen", "width": 1}, {"from": "All Citizens", "to": "Second Citizen", "width": 1}, {"from": "All Citizens", "to": "Third Citizen", "width": 1}, {"from": "All Citizens", "to": "Menenius", "width": 1}, {"from": "All Citizens", "to": "Coriolanus", "width": 1}, {"from": "All Citizens", "to": "Fourth Citizen", "width": 1}, {"from": "All Citizens", "to": "Fifth Citizen", "width": 1}, {"from": "All Citizens", "to": "Both Citizens", "width": 1}, {"from": "All Citizens", "to": "Sixth Citizen", "width": 1}, {"from": "All Citizens", "to": "Seventh Citizen", "width": 1}, {"from": "All Citizens", "to": "Sicinius", "width": 1}, {"from": "All Citizens", "to": "Brutus", "width": 1}, {"from": "All Citizens", "to": "Citizens", "width": 1}, {"from": "A Patrician", "to": "Coriolanus", "width": 2}, {"from": "A Patrician", "to": "Lartius", "width": 1}, {"from": "A Patrician", "to": "Cominius", "width": 2}, {"from": "A Patrician", "to": "Sicinius", "width": 1}, {"from": "A Patrician", "to": "Brutus", "width": 1}, {"from": "A Patrician", "to": "Menenius", "width": 2}, {"from": "A Patrician", "to": "First Senator", "width": 2}, {"from": "A Patrician", "to": "Citizens", "width": 1}, {"from": "A Patrician", "to": "Aedile", "width": 1}, {"from": "A Patrician", "to": "Second Senator", "width": 1}, {"from": "A Patrician", "to": "Second Patrician", "width": 1}, {"from": "A Patrician", "to": "First Citizen", "width": 1}, {"from": "A Patrician", "to": "Volumnia", "width": 1}, {"from": "Second Patrician", "to": "Sicinius", "width": 1}, {"from": "Second Patrician", "to": "Second Senator", "width": 1}, {"from": "Both Tribunes", "to": "Brutus", "width": 2}, {"from": "Both Tribunes", "to": "Sicinius", "width": 2}, {"from": "Both Tribunes", "to": "Menenius", "width": 2}, {"from": "Both Tribunes", "to": "Coriolanus", "width": 1}, {"from": "Both Tribunes", "to": "First Senator", "width": 1}, {"from": "Both Tribunes", "to": "Cominius", "width": 2}, {"from": "Both Tribunes", "to": "Citizens", "width": 2}, {"from": "Both Tribunes", "to": "First Citizen", "width": 1}, {"from": "Both Tribunes", "to": "Messenger", "width": 1}, {"from": "Both Tribunes", "to": "Second Messenger", "width": 1}, {"from": "Both Tribunes", "to": "Second Citizen", "width": 1}, {"from": "Both Tribunes", "to": "Third Citizen", "width": 1}, {"from": "Citizen", "to": "Coriolanus", "width": 1}, {"from": "First Servingman", "to": "Second Servingman", "width": 1}, {"from": "First Servingman", "to": "Third Servingman", "width": 1}, {"from": "Second Servingman", "to": "Third Servingman", "width": 1}, {"from": "First Conspirator", "to": "Second Conspirator", "width": 1}, {"from": "First Conspirator", "to": "Third Conspirator", "width": 1}, {"from": "First Conspirator", "to": "Lords", "width": 1}, {"from": "First Conspirator", "to": "First Lord", "width": 1}, {"from": "First Conspirator", "to": "Second Lord", "width": 1}, {"from": "First Conspirator", "to": "Third Lord", "width": 1}, {"from": "Second Conspirator", "to": "Third Conspirator", "width": 1}, {"from": "Second Conspirator", "to": "Second Lord", "width": 1}, {"from": "Second Conspirator", "to": "Third Lord", "width": 1}, {"from": "Third Conspirator", "to": "Third Lord", "width": 1}, {"from": "All The Lords", "to": "Aufidius", "width": 1}, {"from": "All The Lords", "to": "First Conspirator", "width": 1}, {"from": "All The Lords", "to": "Second Conspirator", "width": 1}, {"from": "All The Lords", "to": "Third Conspirator", "width": 1}, {"from": "All The Lords", "to": "Lords", "width": 1}, {"from": "All The Lords", "to": "First Lord", "width": 1}, {"from": "All The Lords", "to": "Coriolanus", "width": 1}, {"from": "All The Lords", "to": "All The People", "width": 1}, {"from": "All The Lords", "to": "Second Lord", "width": 1}, {"from": "All The Lords", "to": "Third Lord", "width": 1}, {"from": "Lords", "to": "Second Conspirator", "width": 1}, {"from": "Lords", "to": "Third Conspirator", "width": 1}, {"from": "Lords", "to": "Second Lord", "width": 1}, {"from": "Lords", "to": "Third Lord", "width": 1}, {"from": "First Lord", "to": "Second Conspirator", "width": 1}, {"from": "First Lord", "to": "Third Conspirator", "width": 1}, {"from": "First Lord", "to": "Lords", "width": 1}, {"from": "First Lord", "to": "Second Lord", "width": 1}, {"from": "First Lord", "to": "Third Lord", "width": 1}, {"from": "All Conspirators", "to": "Aufidius", "width": 1}, {"from": "All Conspirators", "to": "First Conspirator", "width": 1}, {"from": "All Conspirators", "to": "Second Conspirator", "width": 1}, {"from": "All Conspirators", "to": "Third Conspirator", "width": 1}, {"from": "All Conspirators", "to": "All The Lords", "width": 1}, {"from": "All Conspirators", "to": "Lords", "width": 1}, {"from": "All Conspirators", "to": "First Lord", "width": 1}, {"from": "All Conspirators", "to": "Coriolanus", "width": 1}, {"from": "All Conspirators", "to": "All The People", "width": 1}, {"from": "All Conspirators", "to": "Second Lord", "width": 1}, {"from": "All Conspirators", "to": "Third Lord", "width": 1}, {"from": "All The People", "to": "Aufidius", "width": 1}, {"from": "All The People", "to": "First Conspirator", "width": 1}, {"from": "All The People", "to": "Second Conspirator", "width": 1}, {"from": "All The People", "to": "Third Conspirator", "width": 1}, {"from": "All The People", "to": "Lords", "width": 1}, {"from": "All The People", "to": "First Lord", "width": 1}, {"from": "All The People", "to": "Coriolanus", "width": 1}, {"from": "All The People", "to": "Second Lord", "width": 1}, {"from": "All The People", "to": "Third Lord", "width": 1}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+                    network.on("click", neighbourhoodHighlight);
+                  
+
+                  
+                    network.on("selectNode", neighbourhoodHighlight);
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>

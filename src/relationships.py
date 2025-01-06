@@ -23,7 +23,7 @@ for play in plays:
     else:
         continue
 
-    df = pd.read_csv("data/plays/Macbeth.csv")
+    df = pd.read_csv(filename)
 
     # Get list of normalized character names to add to NER ruleset
     characters = [name for name in df["character"].unique().tolist() if name != "All"]
@@ -109,4 +109,5 @@ for play in plays:
     play_title = play[:play.find(".")]
     viz.show(f"viz/{play_title}.html")
     print(f"{play_title} done processing...")
-    break
+
+print(f"\nAll {len(plays)} plays are done processing.\n")

@@ -1,0 +1,658 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script>function neighbourhoodHighlight(params) {
+  // console.log("in nieghbourhoodhighlight");
+  allNodes = nodes.get({ returnType: "Object" });
+  // originalNodes = JSON.parse(JSON.stringify(allNodes));
+  // if something is selected:
+  if (params.nodes.length > 0) {
+    highlightActive = true;
+    var i, j;
+    var selectedNode = params.nodes[0];
+    var degrees = 2;
+
+    // mark all nodes as hard to read.
+    for (let nodeId in allNodes) {
+      // nodeColors[nodeId] = allNodes[nodeId].color;
+      allNodes[nodeId].color = "rgba(200,200,200,0.5)";
+      if (allNodes[nodeId].hiddenLabel === undefined) {
+        allNodes[nodeId].hiddenLabel = allNodes[nodeId].label;
+        allNodes[nodeId].label = undefined;
+      }
+    }
+    var connectedNodes = network.getConnectedNodes(selectedNode);
+    var allConnectedNodes = [];
+
+    // get the second degree nodes
+    for (i = 1; i < degrees; i++) {
+      for (j = 0; j < connectedNodes.length; j++) {
+        allConnectedNodes = allConnectedNodes.concat(
+          network.getConnectedNodes(connectedNodes[j])
+        );
+      }
+    }
+
+    // all second degree nodes get a different color and their label back
+    for (i = 0; i < allConnectedNodes.length; i++) {
+      // allNodes[allConnectedNodes[i]].color = "pink";
+      allNodes[allConnectedNodes[i]].color = "rgba(150,150,150,0.75)";
+      if (allNodes[allConnectedNodes[i]].hiddenLabel !== undefined) {
+        allNodes[allConnectedNodes[i]].label =
+          allNodes[allConnectedNodes[i]].hiddenLabel;
+        allNodes[allConnectedNodes[i]].hiddenLabel = undefined;
+      }
+    }
+
+    // all first degree nodes get their own color and their label back
+    for (i = 0; i < connectedNodes.length; i++) {
+      // allNodes[connectedNodes[i]].color = undefined;
+      allNodes[connectedNodes[i]].color = nodeColors[connectedNodes[i]];
+      if (allNodes[connectedNodes[i]].hiddenLabel !== undefined) {
+        allNodes[connectedNodes[i]].label =
+          allNodes[connectedNodes[i]].hiddenLabel;
+        allNodes[connectedNodes[i]].hiddenLabel = undefined;
+      }
+    }
+
+    // the main node gets its own color and its label back.
+    // allNodes[selectedNode].color = undefined;
+    allNodes[selectedNode].color = nodeColors[selectedNode];
+    if (allNodes[selectedNode].hiddenLabel !== undefined) {
+      allNodes[selectedNode].label = allNodes[selectedNode].hiddenLabel;
+      allNodes[selectedNode].hiddenLabel = undefined;
+    }
+  } else if (highlightActive === true) {
+    // console.log("highlightActive was true");
+    // reset all nodes
+    for (let nodeId in allNodes) {
+      // allNodes[nodeId].color = "purple";
+      allNodes[nodeId].color = nodeColors[nodeId];
+      // delete allNodes[nodeId].color;
+      if (allNodes[nodeId].hiddenLabel !== undefined) {
+        allNodes[nodeId].label = allNodes[nodeId].hiddenLabel;
+        allNodes[nodeId].hiddenLabel = undefined;
+      }
+    }
+    highlightActive = false;
+  }
+
+  // transform the object into an array
+  var updateArray = [];
+  if (params.nodes.length > 0) {
+    for (let nodeId in allNodes) {
+      if (allNodes.hasOwnProperty(nodeId)) {
+        // console.log(allNodes[nodeId]);
+        updateArray.push(allNodes[nodeId]);
+      }
+    }
+    nodes.update(updateArray);
+  } else {
+    // console.log("Nothing was selected");
+    for (let nodeId in allNodes) {
+      if (allNodes.hasOwnProperty(nodeId)) {
+        // console.log(allNodes[nodeId]);
+        // allNodes[nodeId].color = {};
+        updateArray.push(allNodes[nodeId]);
+      }
+    }
+    nodes.update(updateArray);
+  }
+}
+
+function filterHighlight(params) {
+  allNodes = nodes.get({ returnType: "Object" });
+  // if something is selected:
+  if (params.nodes.length > 0) {
+    filterActive = true;
+    let selectedNodes = params.nodes;
+
+    // hiding all nodes and saving the label
+    for (let nodeId in allNodes) {
+      allNodes[nodeId].hidden = true;
+      if (allNodes[nodeId].savedLabel === undefined) {
+        allNodes[nodeId].savedLabel = allNodes[nodeId].label;
+        allNodes[nodeId].label = undefined;
+      }
+    }
+
+    for (let i=0; i < selectedNodes.length; i++) {
+      allNodes[selectedNodes[i]].hidden = false;
+      if (allNodes[selectedNodes[i]].savedLabel !== undefined) {
+        allNodes[selectedNodes[i]].label = allNodes[selectedNodes[i]].savedLabel;
+        allNodes[selectedNodes[i]].savedLabel = undefined;
+      }
+    }
+
+  } else if (filterActive === true) {
+    // reset all nodes
+    for (let nodeId in allNodes) {
+      allNodes[nodeId].hidden = false;
+      if (allNodes[nodeId].savedLabel !== undefined) {
+        allNodes[nodeId].label = allNodes[nodeId].savedLabel;
+        allNodes[nodeId].savedLabel = undefined;
+      }
+    }
+    filterActive = false;
+  }
+
+  // transform the object into an array
+  var updateArray = [];
+  if (params.nodes.length > 0) {
+    for (let nodeId in allNodes) {
+      if (allNodes.hasOwnProperty(nodeId)) {
+        updateArray.push(allNodes[nodeId]);
+      }
+    }
+    nodes.update(updateArray);
+  } else {
+    for (let nodeId in allNodes) {
+      if (allNodes.hasOwnProperty(nodeId)) {
+        updateArray.push(allNodes[nodeId]);
+      }
+    }
+    nodes.update(updateArray);
+  }
+}
+
+function selectNode(nodes) {
+  network.selectNodes(nodes);
+  neighbourhoodHighlight({ nodes: nodes });
+  return nodes;
+}
+
+function selectNodes(nodes) {
+  network.selectNodes(nodes);
+  filterHighlight({nodes: nodes});
+  return nodes;
+}
+
+function highlightFilter(filter) {
+  let selectedNodes = []
+  let selectedProp = filter['property']
+  if (filter['item'] === 'node') {
+    let allNodes = nodes.get({ returnType: "Object" });
+    for (let nodeId in allNodes) {
+      if (allNodes[nodeId][selectedProp] && filter['value'].includes((allNodes[nodeId][selectedProp]).toString())) {
+        selectedNodes.push(nodeId)
+      }
+    }
+  }
+  else if (filter['item'] === 'edge'){
+    let allEdges = edges.get({returnType: 'object'});
+    // check if the selected property exists for selected edge and select the nodes connected to the edge
+    for (let edge in allEdges) {
+      if (allEdges[edge][selectedProp] && filter['value'].includes((allEdges[edge][selectedProp]).toString())) {
+        selectedNodes.push(allEdges[edge]['from'])
+        selectedNodes.push(allEdges[edge]['to'])
+      }
+    }
+  }
+  selectNodes(selectedNodes)
+}</script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+            
+            
+            
+            
+            
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tom-select/2.0.0-rc.4/css/tom-select.min.css" integrity="sha512-43fHB3GLgZfz8QXl1RPQ8O66oIgv3po9cJ5erMt1c4QISq9dYb195T3vr5ImnJPXuVroKcGBPXBFKETW8jrPNQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/tom-select/2.0.0-rc.4/js/tom-select.complete.js" integrity="sha512-jeF9CfnvzDiw9G9xiksVjxR2lib44Gnovvkv+3CgCG6NXCD4gqlA5nDAVW5WjpA+i+/zKsUWV5xNEbW1X/HH0Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 600px;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+                <div id="select-menu" class="card-header">
+                    <div class="row no-gutters">
+                        <div class="col-10 pb-2">
+                            <select
+                            class="form-select"
+                            aria-label="Default select example"
+                            onchange="selectNode([value]);"
+                            id="select-node"
+                            placeholder="Select node..."
+                            >
+                                <option selected>Select a Node by ID</option>
+                                
+                                    <option value="Jeweller">Jeweller</option>
+                                
+                                    <option value="Merchant">Merchant</option>
+                                
+                                    <option value="Timon">Timon</option>
+                                
+                                    <option value="Poet">Poet</option>
+                                
+                                    <option value="Apemantus">Apemantus</option>
+                                
+                                    <option value="Painter">Painter</option>
+                                
+                                    <option value="Ventidius">Ventidius</option>
+                                
+                                    <option value="Old Athenian">Old Athenian</option>
+                                
+                                    <option value="Lucilius">Lucilius</option>
+                                
+                                    <option value="Alcibiades">Alcibiades</option>
+                                
+                                    <option value="Messenger">Messenger</option>
+                                
+                                    <option value="First Lord">First Lord</option>
+                                
+                                    <option value="Second Lord">Second Lord</option>
+                                
+                                    <option value="Cupid">Cupid</option>
+                                
+                                    <option value="Flavius">Flavius</option>
+                                
+                                    <option value="Lucullus">Lucullus</option>
+                                
+                                    <option value="Third Servant">Third Servant</option>
+                                
+                                    <option value="Senator">Senator</option>
+                                
+                                    <option value="Caphis">Caphis</option>
+                                
+                                    <option value="Servant">Servant</option>
+                                
+                                    <option value="All Servants">All Servants</option>
+                                
+                                    <option value="Fool">Fool</option>
+                                
+                                    <option value="Page">Page</option>
+                                
+                                    <option value="Flaminius">Flaminius</option>
+                                
+                                    <option value="Servilius">Servilius</option>
+                                
+                                    <option value="Sempronius">Sempronius</option>
+                                
+                                    <option value="First Stranger">First Stranger</option>
+                                
+                                    <option value="Second Stranger">Second Stranger</option>
+                                
+                                    <option value="First Servant">First Servant</option>
+                                
+                                    <option value="Titus">Titus</option>
+                                
+                                    <option value="Hortensius">Hortensius</option>
+                                
+                                    <option value="Philotus">Philotus</option>
+                                
+                                    <option value="Both">Both</option>
+                                
+                                    <option value="Servants">Servants</option>
+                                
+                                    <option value="Third Lord">Third Lord</option>
+                                
+                                    <option value="Timandra">Timandra</option>
+                                
+                                    <option value="Phrynia">Phrynia</option>
+                                
+                                    <option value="Banditti">Banditti</option>
+                                
+                                    <option value="First Senator">First Senator</option>
+                                
+                                    <option value="Second Senator">Second Senator</option>
+                                
+                                    <option value="Third Senator">Third Senator</option>
+                                
+                                    <option value="Soldier">Soldier</option>
+                                
+                                    <option value="First Lady">First Lady</option>
+                                
+                                    <option value="All Ladies">All Ladies</option>
+                                
+                                    <option value="Second Servant">Second Servant</option>
+                                
+                                    <option value="All Lords">All Lords</option>
+                                
+                                    <option value="Third Stranger">Third Stranger</option>
+                                
+                                    <option value="Some Speak">Some Speak</option>
+                                
+                                    <option value="Some Others">Some Others</option>
+                                
+                                    <option value="Fourth Lord">Fourth Lord</option>
+                                
+                                    <option value="First Bandit">First Bandit</option>
+                                
+                                    <option value="Second Bandit">Second Bandit</option>
+                                
+                                    <option value="Third Bandit">Third Bandit</option>
+                                
+                            </select>
+                        </div>
+                        <div class="col-2 pb-2">
+                            <button type="button" class="btn btn-primary btn-block" onclick="neighbourhoodHighlight({nodes: []});">Reset Selection</button>
+                        </div>
+                    </div>
+                </div>
+            
+            
+              <div id="filter-menu" class="card-header">
+                <div class="row no-gutters">
+                  <div class="col-3 pb-2">
+                    <select
+                            class="form-select"
+                            aria-label="Default select example"
+                            onchange="updateFilter(value, 'item')"
+                            id="select-item"
+                        >
+                        <option value="">Select a network item</option>
+                        <option value="edge">edge</option>
+                        <option value="node">node</option>
+                    </select>
+                  </div>
+                  <div class="col-3 pb-2">
+                    <select
+                            class="form-select"
+                            aria-label="Default select example"
+                            onchange="updateFilter(value, 'property')"
+                            id="select-property"
+                        >
+                        <option value="">Select a property...</option>
+                    </select>
+                  </div>
+                  <div class="col-3 pb-2">
+                    <select
+                            class="form-select"
+                            aria-label="Default select example"
+                            id="select-value"
+                        >
+                        <option value="">Select value(s)...</option>
+                    </select>
+                  </div>
+                  <div class="col-1 pb-2">
+                    <button type="button" class="btn btn-primary btn-block" onclick="highlightFilter(filter);">Filter</button>
+                  </div>
+                  <div class="col-2 pb-2">
+                    <button type="button" class="btn btn-primary btn-block" onclick="clearFilter(true)">Reset Selection</button>
+                  </div>
+                </div>
+              </div>
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+                  new TomSelect("#select-node",{
+                      create: false,
+                      sortField: {
+                          field: "text",
+                          direction: "asc"
+                      }
+                  });
+              
+
+              
+                  // explicitly using onItemAdd and this function as we need to save multiple values
+                  let updateValueFilter = function() {
+                      return function () {
+                      filter['value'].push(arguments[0])
+                      }
+                  }
+
+                  let valueControl = new TomSelect("#select-value",{
+                      maxItems: null,
+                      valueField: 'id',
+                      labelField: 'title',
+                      searchField: 'title',
+                      create: false,
+                      sortField: {
+                          field: "text",
+                          direction: "asc"
+                      },
+                      onItemAdd: updateValueFilter()
+                  });
+
+                  let addValues = function() {
+                      return function () {
+                          // clear the current value options and add the selected attribute values
+                          // tom-select handles duplicates
+                          let selectedProperty = arguments[0];
+                          valueControl.clear();
+                          valueControl.clearOptions();
+                          filter['value'] = []
+                          if (filter['item'] === 'node') {
+                              for (let each in allNodes) {
+                                  valueControl.addOption({
+                                      id:allNodes[each][selectedProperty],
+                                      title:allNodes[each][selectedProperty]
+                                  })
+                              }
+                          }
+                          else if (filter['item'] === 'edge') {
+                              for (let each in allEdges) {
+                                  valueControl.addOption({
+                                      id:allEdges[each][selectedProperty],
+                                      title:allEdges[each][selectedProperty]
+                                  })
+                              }
+                          }
+                      }
+                  };
+
+                  let propControl = new TomSelect("#select-property",{
+                      valueField: 'id',
+                      labelField: 'title',
+                      searchField: 'title',
+                      create: false,
+                      sortField: {
+                          field: "text",
+                          direction: "asc"
+                      },
+                      onItemAdd: addValues()
+                  });
+
+                  let addProperties = function() {
+                      return function () {
+                          // loops through the selected network item and adds the attributes to dropdown
+                          // tom-select handles duplicates
+                          clearFilter(false)
+                          if (arguments[0] === 'edge') {
+                              for (let each in allEdges) {
+                                  if (allEdges.hasOwnProperty(each)) {
+                                      for (let eachProp in allEdges[each]) {
+                                          if (allEdges[each].hasOwnProperty(eachProp)) {
+                                              propControl.addOption({id: eachProp, title: eachProp})
+                                          }
+                                      }
+                                  }
+                              }
+                          }
+                          else if (arguments[0] === 'node') {
+                              for (let each in allNodes) {
+                                  if (allNodes.hasOwnProperty(each)) {
+                                      for (let eachProp in allNodes[each]) {
+                                          if (allNodes[each].hasOwnProperty(eachProp)
+                                              && (eachProp !== 'hidden' && eachProp !== 'savedLabel'
+                                                  && eachProp !== 'hiddenLabel')) {
+                                              propControl.addOption({id: eachProp, title: eachProp})
+
+                                          }
+                                      }
+                                  }
+                              }
+                          }
+                      }
+                  };
+
+                  let itemControl = new TomSelect("#select-item",{
+                      create: false,
+                      sortField:{
+                          field: "text",
+                          direction: "asc"
+                      },
+                      onItemAdd: addProperties()
+                  });
+
+                  function clearFilter(reset) {
+                      // utility function to clear all the selected filter options
+                      // if reset is set to true, the existing filter will be removed
+                      // else, only the dropdown options are cleared
+                      propControl.clear();
+                      propControl.clearOptions();
+                      valueControl.clear();
+                      valueControl.clearOptions();
+                      filter = {
+                          item : '',
+                          property : '',
+                          value : []
+                      }
+                      if (reset) {
+                          itemControl.clear();
+                          filterHighlight({nodes: []})
+                      }
+                  }
+
+                  function updateFilter(value, key) {
+                      // key could be 'item' or 'property' and value is as selected in dropdown
+                      filter[key] = value
+                  }
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#97c2fc", "id": "Jeweller", "label": "Jeweller", "shape": "dot", "size": 11}, {"color": "#97c2fc", "id": "Merchant", "label": "Merchant", "shape": "dot", "size": 11}, {"color": "#97c2fc", "id": "Timon", "label": "Timon", "shape": "dot", "size": 50}, {"color": "#97c2fc", "id": "Poet", "label": "Poet", "shape": "dot", "size": 15}, {"color": "#97c2fc", "id": "Apemantus", "label": "Apemantus", "shape": "dot", "size": 33}, {"color": "#97c2fc", "id": "Painter", "label": "Painter", "shape": "dot", "size": 17}, {"color": "#97c2fc", "id": "Ventidius", "label": "Ventidius", "shape": "dot", "size": 15}, {"color": "#97c2fc", "id": "Old Athenian", "label": "Old Athenian", "shape": "dot", "size": 11}, {"color": "#97c2fc", "id": "Lucilius", "label": "Lucilius", "shape": "dot", "size": 21}, {"color": "#97c2fc", "id": "Alcibiades", "label": "Alcibiades", "shape": "dot", "size": 32}, {"color": "#97c2fc", "id": "Messenger", "label": "Messenger", "shape": "dot", "size": 14}, {"color": "#97c2fc", "id": "First Lord", "label": "First Lord", "shape": "dot", "size": 24}, {"color": "#97c2fc", "id": "Second Lord", "label": "Second Lord", "shape": "dot", "size": 24}, {"color": "#97c2fc", "id": "Cupid", "label": "Cupid", "shape": "dot", "size": 14}, {"color": "#97c2fc", "id": "Flavius", "label": "Flavius", "shape": "dot", "size": 38}, {"color": "#97c2fc", "id": "Lucullus", "label": "Lucullus", "shape": "dot", "size": 7}, {"color": "#97c2fc", "id": "Third Servant", "label": "Third Servant", "shape": "dot", "size": 16}, {"color": "#97c2fc", "id": "Senator", "label": "Senator", "shape": "dot", "size": 2}, {"color": "#97c2fc", "id": "Caphis", "label": "Caphis", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Servant", "label": "Servant", "shape": "dot", "size": 24}, {"color": "#97c2fc", "id": "All Servants", "label": "All Servants", "shape": "dot", "size": 8}, {"color": "#97c2fc", "id": "Fool", "label": "Fool", "shape": "dot", "size": 9}, {"color": "#97c2fc", "id": "Page", "label": "Page", "shape": "dot", "size": 8}, {"color": "#97c2fc", "id": "Flaminius", "label": "Flaminius", "shape": "dot", "size": 17}, {"color": "#97c2fc", "id": "Servilius", "label": "Servilius", "shape": "dot", "size": 13}, {"color": "#97c2fc", "id": "Sempronius", "label": "Sempronius", "shape": "dot", "size": 4}, {"color": "#97c2fc", "id": "First Stranger", "label": "First Stranger", "shape": "dot", "size": 5}, {"color": "#97c2fc", "id": "Second Stranger", "label": "Second Stranger", "shape": "dot", "size": 5}, {"color": "#97c2fc", "id": "First Servant", "label": "First Servant", "shape": "dot", "size": 11}, {"color": "#97c2fc", "id": "Titus", "label": "Titus", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Hortensius", "label": "Hortensius", "shape": "dot", "size": 12}, {"color": "#97c2fc", "id": "Philotus", "label": "Philotus", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Both", "label": "Both", "shape": "dot", "size": 9}, {"color": "#97c2fc", "id": "Servants", "label": "Servants", "shape": "dot", "size": 9}, {"color": "#97c2fc", "id": "Third Lord", "label": "Third Lord", "shape": "dot", "size": 17}, {"color": "#97c2fc", "id": "Timandra", "label": "Timandra", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Phrynia", "label": "Phrynia", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Banditti", "label": "Banditti", "shape": "dot", "size": 9}, {"color": "#97c2fc", "id": "First Senator", "label": "First Senator", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Second Senator", "label": "Second Senator", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Third Senator", "label": "Third Senator", "shape": "dot", "size": 5}, {"color": "#97c2fc", "id": "Soldier", "label": "Soldier", "shape": "dot", "size": 5}, {"color": "#97c2fc", "id": "First Lady", "label": "First Lady", "shape": "dot", "size": 14}, {"color": "#97c2fc", "id": "All Ladies", "label": "All Ladies", "shape": "dot", "size": 14}, {"color": "#97c2fc", "id": "Second Servant", "label": "Second Servant", "shape": "dot", "size": 20}, {"color": "#97c2fc", "id": "All Lords", "label": "All Lords", "shape": "dot", "size": 14}, {"color": "#97c2fc", "id": "Third Stranger", "label": "Third Stranger", "shape": "dot", "size": 4}, {"color": "#97c2fc", "id": "Some Speak", "label": "Some Speak", "shape": "dot", "size": 6}, {"color": "#97c2fc", "id": "Some Others", "label": "Some Others", "shape": "dot", "size": 6}, {"color": "#97c2fc", "id": "Fourth Lord", "label": "Fourth Lord", "shape": "dot", "size": 6}, {"color": "#97c2fc", "id": "First Bandit", "label": "First Bandit", "shape": "dot", "size": 9}, {"color": "#97c2fc", "id": "Second Bandit", "label": "Second Bandit", "shape": "dot", "size": 9}, {"color": "#97c2fc", "id": "Third Bandit", "label": "Third Bandit", "shape": "dot", "size": 9}]);
+                  edges = new vis.DataSet([{"from": "Jeweller", "to": "Merchant", "width": 2}, {"from": "Jeweller", "to": "Timon", "width": 1}, {"from": "Jeweller", "to": "Poet", "width": 1}, {"from": "Jeweller", "to": "Painter", "width": 1}, {"from": "Jeweller", "to": "Messenger", "width": 1}, {"from": "Jeweller", "to": "Old Athenian", "width": 1}, {"from": "Jeweller", "to": "Lucilius", "width": 1}, {"from": "Jeweller", "to": "Second Lord", "width": 1}, {"from": "Merchant", "to": "Timon", "width": 1}, {"from": "Merchant", "to": "Poet", "width": 1}, {"from": "Merchant", "to": "Painter", "width": 1}, {"from": "Merchant", "to": "Messenger", "width": 1}, {"from": "Merchant", "to": "Old Athenian", "width": 1}, {"from": "Merchant", "to": "Second Lord", "width": 1}, {"from": "Timon", "to": "Ventidius", "width": 5}, {"from": "Timon", "to": "Titus", "width": 3}, {"from": "Poet", "to": "Timon", "width": 4}, {"from": "Poet", "to": "Second Lord", "width": 1}, {"from": "Poet", "to": "Second Senator", "width": 1}, {"from": "Apemantus", "to": "Poet", "width": 1}, {"from": "Apemantus", "to": "Timon", "width": 24}, {"from": "Apemantus", "to": "Jeweller", "width": 1}, {"from": "Apemantus", "to": "Merchant", "width": 1}, {"from": "Apemantus", "to": "First Lord", "width": 2}, {"from": "Apemantus", "to": "Second Lord", "width": 2}, {"from": "Apemantus", "to": "Caphis", "width": 1}, {"from": "Apemantus", "to": "Servant", "width": 4}, {"from": "Apemantus", "to": "Page", "width": 2}, {"from": "Apemantus", "to": "Fool", "width": 1}, {"from": "Apemantus", "to": "Painter", "width": 1}, {"from": "Apemantus", "to": "Messenger", "width": 1}, {"from": "Apemantus", "to": "Old Athenian", "width": 1}, {"from": "Apemantus", "to": "Lucilius", "width": 1}, {"from": "Apemantus", "to": "Ventidius", "width": 1}, {"from": "Apemantus", "to": "Third Lord", "width": 1}, {"from": "Apemantus", "to": "Cupid", "width": 1}, {"from": "Apemantus", "to": "First Lady", "width": 1}, {"from": "Apemantus", "to": "Flavius", "width": 3}, {"from": "Apemantus", "to": "Second Servant", "width": 1}, {"from": "Apemantus", "to": "Third Servant", "width": 1}, {"from": "Apemantus", "to": "Servants", "width": 1}, {"from": "Apemantus", "to": "Flaminius", "width": 1}, {"from": "Apemantus", "to": "Phrynia", "width": 1}, {"from": "Apemantus", "to": "Timandra", "width": 1}, {"from": "Apemantus", "to": "First Bandit", "width": 1}, {"from": "Apemantus", "to": "Second Bandit", "width": 1}, {"from": "Apemantus", "to": "Third Bandit", "width": 1}, {"from": "Apemantus", "to": "Banditti", "width": 1}, {"from": "Painter", "to": "Timon", "width": 2}, {"from": "Painter", "to": "Phrynia", "width": 1}, {"from": "Painter", "to": "Timandra", "width": 1}, {"from": "Painter", "to": "Poet", "width": 2}, {"from": "Painter", "to": "Second Lord", "width": 1}, {"from": "Painter", "to": "Second Senator", "width": 1}, {"from": "Old Athenian", "to": "Timon", "width": 4}, {"from": "Old Athenian", "to": "Poet", "width": 1}, {"from": "Old Athenian", "to": "Painter", "width": 1}, {"from": "Old Athenian", "to": "Second Lord", "width": 1}, {"from": "Lucilius", "to": "Old Athenian", "width": 1}, {"from": "Lucilius", "to": "Timon", "width": 7}, {"from": "Lucilius", "to": "Servilius", "width": 6}, {"from": "Lucilius", "to": "Titus", "width": 3}, {"from": "Lucilius", "to": "Philotus", "width": 4}, {"from": "Lucilius", "to": "Poet", "width": 1}, {"from": "Lucilius", "to": "Painter", "width": 1}, {"from": "Lucilius", "to": "Merchant", "width": 1}, {"from": "Lucilius", "to": "Messenger", "width": 1}, {"from": "Lucilius", "to": "Second Lord", "width": 1}, {"from": "Lucilius", "to": "Second Stranger", "width": 1}, {"from": "Lucilius", "to": "Third Stranger", "width": 1}, {"from": "Alcibiades", "to": "Messenger", "width": 2}, {"from": "Alcibiades", "to": "Timon", "width": 19}, {"from": "Alcibiades", "to": "Apemantus", "width": 4}, {"from": "Alcibiades", "to": "Third Lord", "width": 2}, {"from": "Alcibiades", "to": "First Lord", "width": 3}, {"from": "Alcibiades", "to": "Second Lord", "width": 3}, {"from": "Alcibiades", "to": "Timandra", "width": 1}, {"from": "Alcibiades", "to": "Painter", "width": 2}, {"from": "Alcibiades", "to": "First Senator", "width": 3}, {"from": "Alcibiades", "to": "Poet", "width": 1}, {"from": "Alcibiades", "to": "Merchant", "width": 1}, {"from": "Alcibiades", "to": "Jeweller", "width": 1}, {"from": "Alcibiades", "to": "Old Athenian", "width": 1}, {"from": "Alcibiades", "to": "Lucilius", "width": 1}, {"from": "Alcibiades", "to": "Ventidius", "width": 1}, {"from": "Alcibiades", "to": "Servant", "width": 1}, {"from": "Alcibiades", "to": "Cupid", "width": 1}, {"from": "Alcibiades", "to": "First Lady", "width": 1}, {"from": "Alcibiades", "to": "All Ladies", "width": 1}, {"from": "Alcibiades", "to": "Flavius", "width": 2}, {"from": "Alcibiades", "to": "Second Servant", "width": 1}, {"from": "Alcibiades", "to": "Third Servant", "width": 1}, {"from": "Alcibiades", "to": "All Lords", "width": 1}, {"from": "Alcibiades", "to": "Second Senator", "width": 2}, {"from": "Alcibiades", "to": "Third Senator", "width": 1}, {"from": "Alcibiades", "to": "Phrynia", "width": 1}, {"from": "Alcibiades", "to": "First Bandit", "width": 1}, {"from": "Alcibiades", "to": "Second Bandit", "width": 1}, {"from": "Alcibiades", "to": "Third Bandit", "width": 1}, {"from": "Alcibiades", "to": "Banditti", "width": 1}, {"from": "Alcibiades", "to": "Both", "width": 1}, {"from": "Alcibiades", "to": "Soldier", "width": 1}, {"from": "Messenger", "to": "Timon", "width": 2}, {"from": "Messenger", "to": "Poet", "width": 1}, {"from": "Messenger", "to": "Painter", "width": 1}, {"from": "Messenger", "to": "Old Athenian", "width": 1}, {"from": "Messenger", "to": "Second Lord", "width": 1}, {"from": "Messenger", "to": "Second Senator", "width": 1}, {"from": "Messenger", "to": "Third Senator", "width": 1}, {"from": "First Lord", "to": "Timon", "width": 3}, {"from": "First Lord", "to": "Poet", "width": 1}, {"from": "First Lord", "to": "Painter", "width": 1}, {"from": "First Lord", "to": "Merchant", "width": 1}, {"from": "First Lord", "to": "Jeweller", "width": 1}, {"from": "First Lord", "to": "Messenger", "width": 1}, {"from": "First Lord", "to": "Old Athenian", "width": 1}, {"from": "First Lord", "to": "Lucilius", "width": 1}, {"from": "First Lord", "to": "Second Lord", "width": 3}, {"from": "First Lord", "to": "Ventidius", "width": 1}, {"from": "First Lord", "to": "Third Lord", "width": 2}, {"from": "First Lord", "to": "Servant", "width": 1}, {"from": "First Lord", "to": "Flavius", "width": 1}, {"from": "First Lord", "to": "Second Servant", "width": 1}, {"from": "First Lord", "to": "Third Servant", "width": 1}, {"from": "First Lord", "to": "Some Speak", "width": 1}, {"from": "First Lord", "to": "Some Others", "width": 1}, {"from": "First Lord", "to": "Fourth Lord", "width": 1}, {"from": "Second Lord", "to": "Timon", "width": 4}, {"from": "Second Lord", "to": "Ventidius", "width": 1}, {"from": "Second Lord", "to": "Third Lord", "width": 2}, {"from": "Second Lord", "to": "Servant", "width": 1}, {"from": "Second Lord", "to": "Second Servant", "width": 1}, {"from": "Second Lord", "to": "Third Servant", "width": 1}, {"from": "Second Lord", "to": "Some Speak", "width": 1}, {"from": "Second Lord", "to": "Some Others", "width": 1}, {"from": "Cupid", "to": "Timon", "width": 1}, {"from": "Cupid", "to": "Ventidius", "width": 1}, {"from": "Cupid", "to": "First Lord", "width": 1}, {"from": "Cupid", "to": "Second Lord", "width": 1}, {"from": "Cupid", "to": "Third Lord", "width": 1}, {"from": "Cupid", "to": "Servant", "width": 1}, {"from": "Cupid", "to": "First Lady", "width": 1}, {"from": "Cupid", "to": "Flavius", "width": 1}, {"from": "Cupid", "to": "Second Servant", "width": 1}, {"from": "Cupid", "to": "Third Servant", "width": 1}, {"from": "Flavius", "to": "Timon", "width": 12}, {"from": "Flavius", "to": "Lucullus", "width": 1}, {"from": "Flavius", "to": "Lucilius", "width": 1}, {"from": "Flavius", "to": "Servant", "width": 2}, {"from": "Flavius", "to": "Ventidius", "width": 1}, {"from": "Flavius", "to": "Second Lord", "width": 1}, {"from": "Flavius", "to": "Third Lord", "width": 1}, {"from": "Flavius", "to": "Second Servant", "width": 3}, {"from": "Flavius", "to": "Third Servant", "width": 2}, {"from": "Flavius", "to": "Fool", "width": 1}, {"from": "Flavius", "to": "Page", "width": 1}, {"from": "Flavius", "to": "Servants", "width": 1}, {"from": "Flavius", "to": "Titus", "width": 1}, {"from": "Flavius", "to": "Hortensius", "width": 1}, {"from": "Flavius", "to": "Philotus", "width": 1}, {"from": "Flavius", "to": "Servilius", "width": 1}, {"from": "Flavius", "to": "Phrynia", "width": 1}, {"from": "Flavius", "to": "Timandra", "width": 1}, {"from": "Flavius", "to": "Second Bandit", "width": 1}, {"from": "Flavius", "to": "Third Bandit", "width": 1}, {"from": "Flavius", "to": "Painter", "width": 1}, {"from": "Flavius", "to": "Poet", "width": 1}, {"from": "Flavius", "to": "Second Senator", "width": 1}, {"from": "Lucullus", "to": "Third Servant", "width": 1}, {"from": "Lucullus", "to": "Timon", "width": 3}, {"from": "Lucullus", "to": "Second Stranger", "width": 1}, {"from": "Lucullus", "to": "Sempronius", "width": 2}, {"from": "Lucullus", "to": "Servant", "width": 1}, {"from": "Third Servant", "to": "Timon", "width": 2}, {"from": "Third Servant", "to": "Ventidius", "width": 1}, {"from": "Senator", "to": "Timon", "width": 4}, {"from": "Caphis", "to": "Senator", "width": 2}, {"from": "Caphis", "to": "Servant", "width": 8}, {"from": "Caphis", "to": "Flavius", "width": 1}, {"from": "Caphis", "to": "Timon", "width": 1}, {"from": "Caphis", "to": "Fool", "width": 1}, {"from": "Caphis", "to": "Page", "width": 1}, {"from": "Caphis", "to": "Servants", "width": 1}, {"from": "Caphis", "to": "Flaminius", "width": 1}, {"from": "Servant", "to": "Timon", "width": 6}, {"from": "Servant", "to": "Titus", "width": 3}, {"from": "Servant", "to": "Servilius", "width": 1}, {"from": "Servant", "to": "Ventidius", "width": 1}, {"from": "Servant", "to": "Third Lord", "width": 1}, {"from": "Servant", "to": "Third Servant", "width": 1}, {"from": "All Servants", "to": "Apemantus", "width": 1}, {"from": "All Servants", "to": "Timon", "width": 1}, {"from": "All Servants", "to": "Flavius", "width": 1}, {"from": "All Servants", "to": "Caphis", "width": 1}, {"from": "All Servants", "to": "Fool", "width": 1}, {"from": "All Servants", "to": "Page", "width": 1}, {"from": "All Servants", "to": "Servants", "width": 1}, {"from": "All Servants", "to": "Flaminius", "width": 1}, {"from": "Fool", "to": "Page", "width": 1}, {"from": "Fool", "to": "Servant", "width": 2}, {"from": "Fool", "to": "Timon", "width": 1}, {"from": "Fool", "to": "Servants", "width": 1}, {"from": "Page", "to": "Timon", "width": 1}, {"from": "Page", "to": "Servants", "width": 1}, {"from": "Flaminius", "to": "Timon", "width": 2}, {"from": "Flaminius", "to": "Lucullus", "width": 5}, {"from": "Flaminius", "to": "Titus", "width": 1}, {"from": "Flaminius", "to": "Lucilius", "width": 1}, {"from": "Flaminius", "to": "Servant", "width": 2}, {"from": "Flaminius", "to": "Servilius", "width": 1}, {"from": "Flaminius", "to": "Flavius", "width": 2}, {"from": "Flaminius", "to": "Fool", "width": 1}, {"from": "Flaminius", "to": "Page", "width": 1}, {"from": "Flaminius", "to": "Servants", "width": 1}, {"from": "Flaminius", "to": "Hortensius", "width": 1}, {"from": "Flaminius", "to": "Philotus", "width": 1}, {"from": "Flaminius", "to": "Second Servant", "width": 1}, {"from": "Servilius", "to": "Timon", "width": 2}, {"from": "Servilius", "to": "Titus", "width": 1}, {"from": "Servilius", "to": "Third Stranger", "width": 1}, {"from": "Sempronius", "to": "Timon", "width": 2}, {"from": "Sempronius", "to": "Ventidius", "width": 2}, {"from": "Sempronius", "to": "Servant", "width": 1}, {"from": "First Stranger", "to": "Timon", "width": 5}, {"from": "First Stranger", "to": "Lucilius", "width": 1}, {"from": "First Stranger", "to": "Second Stranger", "width": 1}, {"from": "First Stranger", "to": "Servilius", "width": 1}, {"from": "First Stranger", "to": "Third Stranger", "width": 1}, {"from": "Second Stranger", "to": "Servilius", "width": 1}, {"from": "Second Stranger", "to": "Third Stranger", "width": 1}, {"from": "First Servant", "to": "Titus", "width": 1}, {"from": "First Servant", "to": "Hortensius", "width": 1}, {"from": "First Servant", "to": "Lucilius", "width": 1}, {"from": "First Servant", "to": "Servant", "width": 1}, {"from": "First Servant", "to": "Philotus", "width": 1}, {"from": "First Servant", "to": "Flaminius", "width": 1}, {"from": "First Servant", "to": "Second Servant", "width": 2}, {"from": "First Servant", "to": "Flavius", "width": 2}, {"from": "First Servant", "to": "Servilius", "width": 1}, {"from": "First Servant", "to": "Timon", "width": 1}, {"from": "First Servant", "to": "Third Servant", "width": 1}, {"from": "Hortensius", "to": "Lucilius", "width": 2}, {"from": "Hortensius", "to": "Servant", "width": 2}, {"from": "Hortensius", "to": "Timon", "width": 2}, {"from": "Hortensius", "to": "Servants", "width": 1}, {"from": "Hortensius", "to": "Titus", "width": 1}, {"from": "Hortensius", "to": "Philotus", "width": 1}, {"from": "Hortensius", "to": "Second Servant", "width": 1}, {"from": "Hortensius", "to": "Servilius", "width": 1}, {"from": "Philotus", "to": "Titus", "width": 1}, {"from": "Philotus", "to": "Servant", "width": 4}, {"from": "Philotus", "to": "Timon", "width": 1}, {"from": "Philotus", "to": "Second Servant", "width": 1}, {"from": "Philotus", "to": "Servilius", "width": 1}, {"from": "Both", "to": "Hortensius", "width": 1}, {"from": "Both", "to": "Timon", "width": 2}, {"from": "Both", "to": "Painter", "width": 1}, {"from": "Both", "to": "Poet", "width": 1}, {"from": "Both", "to": "Flavius", "width": 1}, {"from": "Both", "to": "First Senator", "width": 2}, {"from": "Both", "to": "Second Senator", "width": 2}, {"from": "Both", "to": "Soldier", "width": 1}, {"from": "Servants", "to": "Timon", "width": 1}, {"from": "Third Lord", "to": "Ventidius", "width": 1}, {"from": "Third Lord", "to": "Timon", "width": 2}, {"from": "Third Lord", "to": "Third Servant", "width": 1}, {"from": "Timandra", "to": "Timon", "width": 3}, {"from": "Phrynia", "to": "Timon", "width": 2}, {"from": "Phrynia", "to": "Timandra", "width": 1}, {"from": "Phrynia", "to": "Second Bandit", "width": 1}, {"from": "Phrynia", "to": "Third Bandit", "width": 1}, {"from": "Banditti", "to": "Timon", "width": 1}, {"from": "Banditti", "to": "Phrynia", "width": 1}, {"from": "Banditti", "to": "Timandra", "width": 1}, {"from": "Banditti", "to": "First Bandit", "width": 1}, {"from": "Banditti", "to": "Second Bandit", "width": 1}, {"from": "Banditti", "to": "Third Bandit", "width": 1}, {"from": "Banditti", "to": "Flavius", "width": 1}, {"from": "First Senator", "to": "Timon", "width": 2}, {"from": "First Senator", "to": "Second Senator", "width": 4}, {"from": "First Senator", "to": "Third Senator", "width": 2}, {"from": "First Senator", "to": "Painter", "width": 1}, {"from": "First Senator", "to": "Poet", "width": 1}, {"from": "First Senator", "to": "Flavius", "width": 1}, {"from": "First Senator", "to": "Messenger", "width": 1}, {"from": "First Senator", "to": "Soldier", "width": 1}, {"from": "Second Senator", "to": "Timon", "width": 4}, {"from": "Second Senator", "to": "Third Senator", "width": 2}, {"from": "Second Senator", "to": "Soldier", "width": 1}, {"from": "Third Senator", "to": "Timon", "width": 1}, {"from": "Soldier", "to": "Timon", "width": 2}, {"from": "First Lady", "to": "Ventidius", "width": 1}, {"from": "First Lady", "to": "Timon", "width": 1}, {"from": "First Lady", "to": "First Lord", "width": 1}, {"from": "First Lady", "to": "Second Lord", "width": 1}, {"from": "First Lady", "to": "Third Lord", "width": 1}, {"from": "First Lady", "to": "Servant", "width": 1}, {"from": "First Lady", "to": "Flavius", "width": 1}, {"from": "First Lady", "to": "Second Servant", "width": 1}, {"from": "First Lady", "to": "Third Servant", "width": 1}, {"from": "All Ladies", "to": "Ventidius", "width": 1}, {"from": "All Ladies", "to": "Timon", "width": 1}, {"from": "All Ladies", "to": "First Lord", "width": 1}, {"from": "All Ladies", "to": "Apemantus", "width": 1}, {"from": "All Ladies", "to": "Second Lord", "width": 1}, {"from": "All Ladies", "to": "Third Lord", "width": 1}, {"from": "All Ladies", "to": "Servant", "width": 1}, {"from": "All Ladies", "to": "Cupid", "width": 1}, {"from": "All Ladies", "to": "First Lady", "width": 1}, {"from": "All Ladies", "to": "Flavius", "width": 1}, {"from": "All Ladies", "to": "Second Servant", "width": 1}, {"from": "All Ladies", "to": "Third Servant", "width": 1}, {"from": "All Ladies", "to": "All Lords", "width": 1}, {"from": "Second Servant", "to": "Ventidius", "width": 1}, {"from": "Second Servant", "to": "Timon", "width": 2}, {"from": "Second Servant", "to": "Third Lord", "width": 1}, {"from": "Second Servant", "to": "Servant", "width": 1}, {"from": "Second Servant", "to": "Third Servant", "width": 2}, {"from": "Second Servant", "to": "Titus", "width": 1}, {"from": "Second Servant", "to": "Servilius", "width": 1}, {"from": "All Lords", "to": "Ventidius", "width": 1}, {"from": "All Lords", "to": "Timon", "width": 1}, {"from": "All Lords", "to": "First Lord", "width": 1}, {"from": "All Lords", "to": "Apemantus", "width": 1}, {"from": "All Lords", "to": "Second Lord", "width": 1}, {"from": "All Lords", "to": "Third Lord", "width": 1}, {"from": "All Lords", "to": "Servant", "width": 1}, {"from": "All Lords", "to": "Cupid", "width": 1}, {"from": "All Lords", "to": "First Lady", "width": 1}, {"from": "All Lords", "to": "Flavius", "width": 1}, {"from": "All Lords", "to": "Second Servant", "width": 1}, {"from": "All Lords", "to": "Third Servant", "width": 1}, {"from": "Some Speak", "to": "Timon", "width": 1}, {"from": "Some Speak", "to": "Third Lord", "width": 1}, {"from": "Some Others", "to": "Timon", "width": 1}, {"from": "Some Others", "to": "Third Lord", "width": 1}, {"from": "Some Others", "to": "Some Speak", "width": 1}, {"from": "Fourth Lord", "to": "Second Lord", "width": 1}, {"from": "Fourth Lord", "to": "Timon", "width": 1}, {"from": "Fourth Lord", "to": "Third Lord", "width": 1}, {"from": "Fourth Lord", "to": "Some Speak", "width": 1}, {"from": "Fourth Lord", "to": "Some Others", "width": 1}, {"from": "First Bandit", "to": "Timon", "width": 1}, {"from": "First Bandit", "to": "Phrynia", "width": 1}, {"from": "First Bandit", "to": "Timandra", "width": 1}, {"from": "First Bandit", "to": "Second Bandit", "width": 1}, {"from": "First Bandit", "to": "Third Bandit", "width": 1}, {"from": "First Bandit", "to": "Flavius", "width": 1}, {"from": "Second Bandit", "to": "Timon", "width": 1}, {"from": "Second Bandit", "to": "Timandra", "width": 1}, {"from": "Second Bandit", "to": "Third Bandit", "width": 1}, {"from": "Third Bandit", "to": "Timon", "width": 1}, {"from": "Third Bandit", "to": "Timandra", "width": 1}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+                    network.on("click", neighbourhoodHighlight);
+                  
+
+                  
+                    network.on("selectNode", neighbourhoodHighlight);
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>

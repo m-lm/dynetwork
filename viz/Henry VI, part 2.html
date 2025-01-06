@@ -1,0 +1,678 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script>function neighbourhoodHighlight(params) {
+  // console.log("in nieghbourhoodhighlight");
+  allNodes = nodes.get({ returnType: "Object" });
+  // originalNodes = JSON.parse(JSON.stringify(allNodes));
+  // if something is selected:
+  if (params.nodes.length > 0) {
+    highlightActive = true;
+    var i, j;
+    var selectedNode = params.nodes[0];
+    var degrees = 2;
+
+    // mark all nodes as hard to read.
+    for (let nodeId in allNodes) {
+      // nodeColors[nodeId] = allNodes[nodeId].color;
+      allNodes[nodeId].color = "rgba(200,200,200,0.5)";
+      if (allNodes[nodeId].hiddenLabel === undefined) {
+        allNodes[nodeId].hiddenLabel = allNodes[nodeId].label;
+        allNodes[nodeId].label = undefined;
+      }
+    }
+    var connectedNodes = network.getConnectedNodes(selectedNode);
+    var allConnectedNodes = [];
+
+    // get the second degree nodes
+    for (i = 1; i < degrees; i++) {
+      for (j = 0; j < connectedNodes.length; j++) {
+        allConnectedNodes = allConnectedNodes.concat(
+          network.getConnectedNodes(connectedNodes[j])
+        );
+      }
+    }
+
+    // all second degree nodes get a different color and their label back
+    for (i = 0; i < allConnectedNodes.length; i++) {
+      // allNodes[allConnectedNodes[i]].color = "pink";
+      allNodes[allConnectedNodes[i]].color = "rgba(150,150,150,0.75)";
+      if (allNodes[allConnectedNodes[i]].hiddenLabel !== undefined) {
+        allNodes[allConnectedNodes[i]].label =
+          allNodes[allConnectedNodes[i]].hiddenLabel;
+        allNodes[allConnectedNodes[i]].hiddenLabel = undefined;
+      }
+    }
+
+    // all first degree nodes get their own color and their label back
+    for (i = 0; i < connectedNodes.length; i++) {
+      // allNodes[connectedNodes[i]].color = undefined;
+      allNodes[connectedNodes[i]].color = nodeColors[connectedNodes[i]];
+      if (allNodes[connectedNodes[i]].hiddenLabel !== undefined) {
+        allNodes[connectedNodes[i]].label =
+          allNodes[connectedNodes[i]].hiddenLabel;
+        allNodes[connectedNodes[i]].hiddenLabel = undefined;
+      }
+    }
+
+    // the main node gets its own color and its label back.
+    // allNodes[selectedNode].color = undefined;
+    allNodes[selectedNode].color = nodeColors[selectedNode];
+    if (allNodes[selectedNode].hiddenLabel !== undefined) {
+      allNodes[selectedNode].label = allNodes[selectedNode].hiddenLabel;
+      allNodes[selectedNode].hiddenLabel = undefined;
+    }
+  } else if (highlightActive === true) {
+    // console.log("highlightActive was true");
+    // reset all nodes
+    for (let nodeId in allNodes) {
+      // allNodes[nodeId].color = "purple";
+      allNodes[nodeId].color = nodeColors[nodeId];
+      // delete allNodes[nodeId].color;
+      if (allNodes[nodeId].hiddenLabel !== undefined) {
+        allNodes[nodeId].label = allNodes[nodeId].hiddenLabel;
+        allNodes[nodeId].hiddenLabel = undefined;
+      }
+    }
+    highlightActive = false;
+  }
+
+  // transform the object into an array
+  var updateArray = [];
+  if (params.nodes.length > 0) {
+    for (let nodeId in allNodes) {
+      if (allNodes.hasOwnProperty(nodeId)) {
+        // console.log(allNodes[nodeId]);
+        updateArray.push(allNodes[nodeId]);
+      }
+    }
+    nodes.update(updateArray);
+  } else {
+    // console.log("Nothing was selected");
+    for (let nodeId in allNodes) {
+      if (allNodes.hasOwnProperty(nodeId)) {
+        // console.log(allNodes[nodeId]);
+        // allNodes[nodeId].color = {};
+        updateArray.push(allNodes[nodeId]);
+      }
+    }
+    nodes.update(updateArray);
+  }
+}
+
+function filterHighlight(params) {
+  allNodes = nodes.get({ returnType: "Object" });
+  // if something is selected:
+  if (params.nodes.length > 0) {
+    filterActive = true;
+    let selectedNodes = params.nodes;
+
+    // hiding all nodes and saving the label
+    for (let nodeId in allNodes) {
+      allNodes[nodeId].hidden = true;
+      if (allNodes[nodeId].savedLabel === undefined) {
+        allNodes[nodeId].savedLabel = allNodes[nodeId].label;
+        allNodes[nodeId].label = undefined;
+      }
+    }
+
+    for (let i=0; i < selectedNodes.length; i++) {
+      allNodes[selectedNodes[i]].hidden = false;
+      if (allNodes[selectedNodes[i]].savedLabel !== undefined) {
+        allNodes[selectedNodes[i]].label = allNodes[selectedNodes[i]].savedLabel;
+        allNodes[selectedNodes[i]].savedLabel = undefined;
+      }
+    }
+
+  } else if (filterActive === true) {
+    // reset all nodes
+    for (let nodeId in allNodes) {
+      allNodes[nodeId].hidden = false;
+      if (allNodes[nodeId].savedLabel !== undefined) {
+        allNodes[nodeId].label = allNodes[nodeId].savedLabel;
+        allNodes[nodeId].savedLabel = undefined;
+      }
+    }
+    filterActive = false;
+  }
+
+  // transform the object into an array
+  var updateArray = [];
+  if (params.nodes.length > 0) {
+    for (let nodeId in allNodes) {
+      if (allNodes.hasOwnProperty(nodeId)) {
+        updateArray.push(allNodes[nodeId]);
+      }
+    }
+    nodes.update(updateArray);
+  } else {
+    for (let nodeId in allNodes) {
+      if (allNodes.hasOwnProperty(nodeId)) {
+        updateArray.push(allNodes[nodeId]);
+      }
+    }
+    nodes.update(updateArray);
+  }
+}
+
+function selectNode(nodes) {
+  network.selectNodes(nodes);
+  neighbourhoodHighlight({ nodes: nodes });
+  return nodes;
+}
+
+function selectNodes(nodes) {
+  network.selectNodes(nodes);
+  filterHighlight({nodes: nodes});
+  return nodes;
+}
+
+function highlightFilter(filter) {
+  let selectedNodes = []
+  let selectedProp = filter['property']
+  if (filter['item'] === 'node') {
+    let allNodes = nodes.get({ returnType: "Object" });
+    for (let nodeId in allNodes) {
+      if (allNodes[nodeId][selectedProp] && filter['value'].includes((allNodes[nodeId][selectedProp]).toString())) {
+        selectedNodes.push(nodeId)
+      }
+    }
+  }
+  else if (filter['item'] === 'edge'){
+    let allEdges = edges.get({returnType: 'object'});
+    // check if the selected property exists for selected edge and select the nodes connected to the edge
+    for (let edge in allEdges) {
+      if (allEdges[edge][selectedProp] && filter['value'].includes((allEdges[edge][selectedProp]).toString())) {
+        selectedNodes.push(allEdges[edge]['from'])
+        selectedNodes.push(allEdges[edge]['to'])
+      }
+    }
+  }
+  selectNodes(selectedNodes)
+}</script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+            
+            
+            
+            
+            
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tom-select/2.0.0-rc.4/css/tom-select.min.css" integrity="sha512-43fHB3GLgZfz8QXl1RPQ8O66oIgv3po9cJ5erMt1c4QISq9dYb195T3vr5ImnJPXuVroKcGBPXBFKETW8jrPNQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/tom-select/2.0.0-rc.4/js/tom-select.complete.js" integrity="sha512-jeF9CfnvzDiw9G9xiksVjxR2lib44Gnovvkv+3CgCG6NXCD4gqlA5nDAVW5WjpA+i+/zKsUWV5xNEbW1X/HH0Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 600px;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+                <div id="select-menu" class="card-header">
+                    <div class="row no-gutters">
+                        <div class="col-10 pb-2">
+                            <select
+                            class="form-select"
+                            aria-label="Default select example"
+                            onchange="selectNode([value]);"
+                            id="select-node"
+                            placeholder="Select node..."
+                            >
+                                <option selected>Select a Node by ID</option>
+                                
+                                    <option value="King Henry Vi">King Henry Vi</option>
+                                
+                                    <option value="Suffolk">Suffolk</option>
+                                
+                                    <option value="Queen Margaret">Queen Margaret</option>
+                                
+                                    <option value="Gloucester">Gloucester</option>
+                                
+                                    <option value="York">York</option>
+                                
+                                    <option value="Buckingham">Buckingham</option>
+                                
+                                    <option value="Somerset">Somerset</option>
+                                
+                                    <option value="Salisbury">Salisbury</option>
+                                
+                                    <option value="Warwick">Warwick</option>
+                                
+                                    <option value="Cardinal">Cardinal</option>
+                                
+                                    <option value="Duchess">Duchess</option>
+                                
+                                    <option value="Bolingbroke">Bolingbroke</option>
+                                
+                                    <option value="Hume">Hume</option>
+                                
+                                    <option value="Second Petitioner">Second Petitioner</option>
+                                
+                                    <option value="Horner">Horner</option>
+                                
+                                    <option value="Peter">Peter</option>
+                                
+                                    <option value="Richard">Richard</option>
+                                
+                                    <option value="Say">Say</option>
+                                
+                                    <option value="Master">Master</option>
+                                
+                                    <option value="Edward">Edward</option>
+                                
+                                    <option value="Both">Both</option>
+                                
+                                    <option value="Stanley">Stanley</option>
+                                
+                                    <option value="First Neighbour">First Neighbour</option>
+                                
+                                    <option value="Sheriff">Sheriff</option>
+                                
+                                    <option value="Cade">Cade</option>
+                                
+                                    <option value="First Murderer">First Murderer</option>
+                                
+                                    <option value="Commons">Commons</option>
+                                
+                                    <option value="Vaux">Vaux</option>
+                                
+                                    <option value="Captain">Captain</option>
+                                
+                                    <option value="Whitmore">Whitmore</option>
+                                
+                                    <option value="Bevis">Bevis</option>
+                                
+                                    <option value="Dick">Dick</option>
+                                
+                                    <option value="Holland">Holland</option>
+                                
+                                    <option value="Smith">Smith</option>
+                                
+                                    <option value="Michael">Michael</option>
+                                
+                                    <option value="Sir Humphrey">Sir Humphrey</option>
+                                
+                                    <option value="William Stafford">William Stafford</option>
+                                
+                                    <option value="Herald">Herald</option>
+                                
+                                    <option value="Messenger">Messenger</option>
+                                
+                                    <option value="Scales">Scales</option>
+                                
+                                    <option value="Soldier">Soldier</option>
+                                
+                                    <option value="Clifford">Clifford</option>
+                                
+                                    <option value="Iden">Iden</option>
+                                
+                                    <option value="Young Clifford">Young Clifford</option>
+                                
+                                    <option value="First Petitioner">First Petitioner</option>
+                                
+                                    <option value="Spirit">Spirit</option>
+                                
+                                    <option value="Margaret Jourdain">Margaret Jourdain</option>
+                                
+                                    <option value="Townsman">Townsman</option>
+                                
+                                    <option value="Simpcox">Simpcox</option>
+                                
+                                    <option value="Wife">Wife</option>
+                                
+                                    <option value="Mayor">Mayor</option>
+                                
+                                    <option value="Beadle">Beadle</option>
+                                
+                                    <option value="Second Neighbour">Second Neighbour</option>
+                                
+                                    <option value="Third Neighbour">Third Neighbour</option>
+                                
+                                    <option value="Servants">Servants</option>
+                                
+                                    <option value="Servant">Servant</option>
+                                
+                                    <option value="Post">Post</option>
+                                
+                                    <option value="Second Murderer">Second Murderer</option>
+                                
+                                    <option value="First Murder">First Murder</option>
+                                
+                                    <option value="First Gentleman">First Gentleman</option>
+                                
+                                    <option value="Second Gentleman">Second Gentleman</option>
+                                
+                                    <option value="Clerk">Clerk</option>
+                                
+                                    <option value="First Citizen">First Citizen</option>
+                                
+                            </select>
+                        </div>
+                        <div class="col-2 pb-2">
+                            <button type="button" class="btn btn-primary btn-block" onclick="neighbourhoodHighlight({nodes: []});">Reset Selection</button>
+                        </div>
+                    </div>
+                </div>
+            
+            
+              <div id="filter-menu" class="card-header">
+                <div class="row no-gutters">
+                  <div class="col-3 pb-2">
+                    <select
+                            class="form-select"
+                            aria-label="Default select example"
+                            onchange="updateFilter(value, 'item')"
+                            id="select-item"
+                        >
+                        <option value="">Select a network item</option>
+                        <option value="edge">edge</option>
+                        <option value="node">node</option>
+                    </select>
+                  </div>
+                  <div class="col-3 pb-2">
+                    <select
+                            class="form-select"
+                            aria-label="Default select example"
+                            onchange="updateFilter(value, 'property')"
+                            id="select-property"
+                        >
+                        <option value="">Select a property...</option>
+                    </select>
+                  </div>
+                  <div class="col-3 pb-2">
+                    <select
+                            class="form-select"
+                            aria-label="Default select example"
+                            id="select-value"
+                        >
+                        <option value="">Select value(s)...</option>
+                    </select>
+                  </div>
+                  <div class="col-1 pb-2">
+                    <button type="button" class="btn btn-primary btn-block" onclick="highlightFilter(filter);">Filter</button>
+                  </div>
+                  <div class="col-2 pb-2">
+                    <button type="button" class="btn btn-primary btn-block" onclick="clearFilter(true)">Reset Selection</button>
+                  </div>
+                </div>
+              </div>
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+                  new TomSelect("#select-node",{
+                      create: false,
+                      sortField: {
+                          field: "text",
+                          direction: "asc"
+                      }
+                  });
+              
+
+              
+                  // explicitly using onItemAdd and this function as we need to save multiple values
+                  let updateValueFilter = function() {
+                      return function () {
+                      filter['value'].push(arguments[0])
+                      }
+                  }
+
+                  let valueControl = new TomSelect("#select-value",{
+                      maxItems: null,
+                      valueField: 'id',
+                      labelField: 'title',
+                      searchField: 'title',
+                      create: false,
+                      sortField: {
+                          field: "text",
+                          direction: "asc"
+                      },
+                      onItemAdd: updateValueFilter()
+                  });
+
+                  let addValues = function() {
+                      return function () {
+                          // clear the current value options and add the selected attribute values
+                          // tom-select handles duplicates
+                          let selectedProperty = arguments[0];
+                          valueControl.clear();
+                          valueControl.clearOptions();
+                          filter['value'] = []
+                          if (filter['item'] === 'node') {
+                              for (let each in allNodes) {
+                                  valueControl.addOption({
+                                      id:allNodes[each][selectedProperty],
+                                      title:allNodes[each][selectedProperty]
+                                  })
+                              }
+                          }
+                          else if (filter['item'] === 'edge') {
+                              for (let each in allEdges) {
+                                  valueControl.addOption({
+                                      id:allEdges[each][selectedProperty],
+                                      title:allEdges[each][selectedProperty]
+                                  })
+                              }
+                          }
+                      }
+                  };
+
+                  let propControl = new TomSelect("#select-property",{
+                      valueField: 'id',
+                      labelField: 'title',
+                      searchField: 'title',
+                      create: false,
+                      sortField: {
+                          field: "text",
+                          direction: "asc"
+                      },
+                      onItemAdd: addValues()
+                  });
+
+                  let addProperties = function() {
+                      return function () {
+                          // loops through the selected network item and adds the attributes to dropdown
+                          // tom-select handles duplicates
+                          clearFilter(false)
+                          if (arguments[0] === 'edge') {
+                              for (let each in allEdges) {
+                                  if (allEdges.hasOwnProperty(each)) {
+                                      for (let eachProp in allEdges[each]) {
+                                          if (allEdges[each].hasOwnProperty(eachProp)) {
+                                              propControl.addOption({id: eachProp, title: eachProp})
+                                          }
+                                      }
+                                  }
+                              }
+                          }
+                          else if (arguments[0] === 'node') {
+                              for (let each in allNodes) {
+                                  if (allNodes.hasOwnProperty(each)) {
+                                      for (let eachProp in allNodes[each]) {
+                                          if (allNodes[each].hasOwnProperty(eachProp)
+                                              && (eachProp !== 'hidden' && eachProp !== 'savedLabel'
+                                                  && eachProp !== 'hiddenLabel')) {
+                                              propControl.addOption({id: eachProp, title: eachProp})
+
+                                          }
+                                      }
+                                  }
+                              }
+                          }
+                      }
+                  };
+
+                  let itemControl = new TomSelect("#select-item",{
+                      create: false,
+                      sortField:{
+                          field: "text",
+                          direction: "asc"
+                      },
+                      onItemAdd: addProperties()
+                  });
+
+                  function clearFilter(reset) {
+                      // utility function to clear all the selected filter options
+                      // if reset is set to true, the existing filter will be removed
+                      // else, only the dropdown options are cleared
+                      propControl.clear();
+                      propControl.clearOptions();
+                      valueControl.clear();
+                      valueControl.clearOptions();
+                      filter = {
+                          item : '',
+                          property : '',
+                          value : []
+                      }
+                      if (reset) {
+                          itemControl.clear();
+                          filterHighlight({nodes: []})
+                      }
+                  }
+
+                  function updateFilter(value, key) {
+                      // key could be 'item' or 'property' and value is as selected in dropdown
+                      filter[key] = value
+                  }
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#97c2fc", "id": "King Henry Vi", "label": "King Henry Vi", "shape": "dot", "size": 37}, {"color": "#97c2fc", "id": "Suffolk", "label": "Suffolk", "shape": "dot", "size": 37}, {"color": "#97c2fc", "id": "Queen Margaret", "label": "Queen Margaret", "shape": "dot", "size": 35}, {"color": "#97c2fc", "id": "Gloucester", "label": "Gloucester", "shape": "dot", "size": 30}, {"color": "#97c2fc", "id": "York", "label": "York", "shape": "dot", "size": 33}, {"color": "#97c2fc", "id": "Buckingham", "label": "Buckingham", "shape": "dot", "size": 32}, {"color": "#97c2fc", "id": "Somerset", "label": "Somerset", "shape": "dot", "size": 27}, {"color": "#97c2fc", "id": "Salisbury", "label": "Salisbury", "shape": "dot", "size": 29}, {"color": "#97c2fc", "id": "Warwick", "label": "Warwick", "shape": "dot", "size": 26}, {"color": "#97c2fc", "id": "Cardinal", "label": "Cardinal", "shape": "dot", "size": 26}, {"color": "#97c2fc", "id": "Duchess", "label": "Duchess", "shape": "dot", "size": 27}, {"color": "#97c2fc", "id": "Bolingbroke", "label": "Bolingbroke", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Hume", "label": "Hume", "shape": "dot", "size": 9}, {"color": "#97c2fc", "id": "Second Petitioner", "label": "Second Petitioner", "shape": "dot", "size": 14}, {"color": "#97c2fc", "id": "Horner", "label": "Horner", "shape": "dot", "size": 17}, {"color": "#97c2fc", "id": "Peter", "label": "Peter", "shape": "dot", "size": 17}, {"color": "#97c2fc", "id": "Richard", "label": "Richard", "shape": "dot", "size": 13}, {"color": "#97c2fc", "id": "Say", "label": "Say", "shape": "dot", "size": 12}, {"color": "#97c2fc", "id": "Master", "label": "Master", "shape": "dot", "size": 6}, {"color": "#97c2fc", "id": "Edward", "label": "Edward", "shape": "dot", "size": 11}, {"color": "#97c2fc", "id": "Both", "label": "Both", "shape": "dot", "size": 4}, {"color": "#97c2fc", "id": "Stanley", "label": "Stanley", "shape": "dot", "size": 7}, {"color": "#97c2fc", "id": "First Neighbour", "label": "First Neighbour", "shape": "dot", "size": 11}, {"color": "#97c2fc", "id": "Sheriff", "label": "Sheriff", "shape": "dot", "size": 6}, {"color": "#97c2fc", "id": "Cade", "label": "Cade", "shape": "dot", "size": 17}, {"color": "#97c2fc", "id": "First Murderer", "label": "First Murderer", "shape": "dot", "size": 11}, {"color": "#97c2fc", "id": "Commons", "label": "Commons", "shape": "dot", "size": 11}, {"color": "#97c2fc", "id": "Vaux", "label": "Vaux", "shape": "dot", "size": 11}, {"color": "#97c2fc", "id": "Captain", "label": "Captain", "shape": "dot", "size": 7}, {"color": "#97c2fc", "id": "Whitmore", "label": "Whitmore", "shape": "dot", "size": 5}, {"color": "#97c2fc", "id": "Bevis", "label": "Bevis", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Dick", "label": "Dick", "shape": "dot", "size": 11}, {"color": "#97c2fc", "id": "Holland", "label": "Holland", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Smith", "label": "Smith", "shape": "dot", "size": 11}, {"color": "#97c2fc", "id": "Michael", "label": "Michael", "shape": "dot", "size": 8}, {"color": "#97c2fc", "id": "Sir Humphrey", "label": "Sir Humphrey", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "William Stafford", "label": "William Stafford", "shape": "dot", "size": 9}, {"color": "#97c2fc", "id": "Herald", "label": "Herald", "shape": "dot", "size": 7}, {"color": "#97c2fc", "id": "Messenger", "label": "Messenger", "shape": "dot", "size": 16}, {"color": "#97c2fc", "id": "Scales", "label": "Scales", "shape": "dot", "size": 2}, {"color": "#97c2fc", "id": "Soldier", "label": "Soldier", "shape": "dot", "size": 3}, {"color": "#97c2fc", "id": "Clifford", "label": "Clifford", "shape": "dot", "size": 13}, {"color": "#97c2fc", "id": "Iden", "label": "Iden", "shape": "dot", "size": 12}, {"color": "#97c2fc", "id": "Young Clifford", "label": "Young Clifford", "shape": "dot", "size": 11}, {"color": "#97c2fc", "id": "First Petitioner", "label": "First Petitioner", "shape": "dot", "size": 14}, {"color": "#97c2fc", "id": "Spirit", "label": "Spirit", "shape": "dot", "size": 6}, {"color": "#97c2fc", "id": "Margaret Jourdain", "label": "Margaret Jourdain", "shape": "dot", "size": 6}, {"color": "#97c2fc", "id": "Townsman", "label": "Townsman", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Simpcox", "label": "Simpcox", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Wife", "label": "Wife", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Mayor", "label": "Mayor", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Beadle", "label": "Beadle", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Second Neighbour", "label": "Second Neighbour", "shape": "dot", "size": 11}, {"color": "#97c2fc", "id": "Third Neighbour", "label": "Third Neighbour", "shape": "dot", "size": 11}, {"color": "#97c2fc", "id": "Servants", "label": "Servants", "shape": "dot", "size": 6}, {"color": "#97c2fc", "id": "Servant", "label": "Servant", "shape": "dot", "size": 6}, {"color": "#97c2fc", "id": "Post", "label": "Post", "shape": "dot", "size": 8}, {"color": "#97c2fc", "id": "Second Murderer", "label": "Second Murderer", "shape": "dot", "size": 11}, {"color": "#97c2fc", "id": "First Murder", "label": "First Murder", "shape": "dot", "size": 11}, {"color": "#97c2fc", "id": "First Gentleman", "label": "First Gentleman", "shape": "dot", "size": 5}, {"color": "#97c2fc", "id": "Second Gentleman", "label": "Second Gentleman", "shape": "dot", "size": 5}, {"color": "#97c2fc", "id": "Clerk", "label": "Clerk", "shape": "dot", "size": 8}, {"color": "#97c2fc", "id": "First Citizen", "label": "First Citizen", "shape": "dot", "size": 1}]);
+                  edges = new vis.DataSet([{"from": "King Henry Vi", "to": "Suffolk", "width": 11}, {"from": "King Henry Vi", "to": "Queen Margaret", "width": 9}, {"from": "King Henry Vi", "to": "York", "width": 9}, {"from": "King Henry Vi", "to": "Somerset", "width": 8}, {"from": "King Henry Vi", "to": "Salisbury", "width": 6}, {"from": "King Henry Vi", "to": "Warwick", "width": 8}, {"from": "King Henry Vi", "to": "Say", "width": 5}, {"from": "King Henry Vi", "to": "Stanley", "width": 1}, {"from": "King Henry Vi", "to": "Second Petitioner", "width": 1}, {"from": "King Henry Vi", "to": "Peter", "width": 2}, {"from": "King Henry Vi", "to": "Townsman", "width": 1}, {"from": "King Henry Vi", "to": "Simpcox", "width": 1}, {"from": "King Henry Vi", "to": "Wife", "width": 1}, {"from": "King Henry Vi", "to": "Mayor", "width": 1}, {"from": "King Henry Vi", "to": "Second Neighbour", "width": 1}, {"from": "King Henry Vi", "to": "Third Neighbour", "width": 1}, {"from": "King Henry Vi", "to": "Post", "width": 1}, {"from": "King Henry Vi", "to": "Second Murderer", "width": 1}, {"from": "King Henry Vi", "to": "Vaux", "width": 1}, {"from": "King Henry Vi", "to": "Messenger", "width": 2}, {"from": "King Henry Vi", "to": "Richard", "width": 2}, {"from": "King Henry Vi", "to": "Young Clifford", "width": 2}, {"from": "Suffolk", "to": "York", "width": 16}, {"from": "Suffolk", "to": "Warwick", "width": 9}, {"from": "Suffolk", "to": "Whitmore", "width": 3}, {"from": "Suffolk", "to": "Townsman", "width": 1}, {"from": "Suffolk", "to": "Wife", "width": 1}, {"from": "Suffolk", "to": "Third Neighbour", "width": 1}, {"from": "Suffolk", "to": "Vaux", "width": 1}, {"from": "Queen Margaret", "to": "York", "width": 9}, {"from": "Queen Margaret", "to": "Suffolk", "width": 20}, {"from": "Queen Margaret", "to": "Somerset", "width": 5}, {"from": "Queen Margaret", "to": "Vaux", "width": 1}, {"from": "Queen Margaret", "to": "Salisbury", "width": 5}, {"from": "Queen Margaret", "to": "Warwick", "width": 5}, {"from": "Queen Margaret", "to": "Second Petitioner", "width": 1}, {"from": "Queen Margaret", "to": "Townsman", "width": 1}, {"from": "Queen Margaret", "to": "Simpcox", "width": 1}, {"from": "Queen Margaret", "to": "Wife", "width": 1}, {"from": "Queen Margaret", "to": "Second Neighbour", "width": 1}, {"from": "Queen Margaret", "to": "Third Neighbour", "width": 1}, {"from": "Queen Margaret", "to": "Second Murderer", "width": 1}, {"from": "Queen Margaret", "to": "Say", "width": 1}, {"from": "Queen Margaret", "to": "Richard", "width": 2}, {"from": "Queen Margaret", "to": "Young Clifford", "width": 2}, {"from": "Gloucester", "to": "Suffolk", "width": 12}, {"from": "Gloucester", "to": "King Henry Vi", "width": 13}, {"from": "Gloucester", "to": "Somerset", "width": 5}, {"from": "Gloucester", "to": "York", "width": 6}, {"from": "Gloucester", "to": "Salisbury", "width": 4}, {"from": "Gloucester", "to": "Warwick", "width": 2}, {"from": "Gloucester", "to": "Queen Margaret", "width": 8}, {"from": "Gloucester", "to": "Messenger", "width": 1}, {"from": "Gloucester", "to": "Hume", "width": 1}, {"from": "Gloucester", "to": "Second Petitioner", "width": 1}, {"from": "Gloucester", "to": "Peter", "width": 2}, {"from": "Gloucester", "to": "Horner", "width": 2}, {"from": "Gloucester", "to": "Townsman", "width": 1}, {"from": "Gloucester", "to": "Simpcox", "width": 1}, {"from": "Gloucester", "to": "Wife", "width": 1}, {"from": "Gloucester", "to": "Mayor", "width": 1}, {"from": "Gloucester", "to": "Second Neighbour", "width": 1}, {"from": "Gloucester", "to": "Third Neighbour", "width": 1}, {"from": "Gloucester", "to": "Servants", "width": 1}, {"from": "Gloucester", "to": "Servant", "width": 1}, {"from": "Gloucester", "to": "Herald", "width": 1}, {"from": "Gloucester", "to": "Sheriff", "width": 1}, {"from": "Gloucester", "to": "Stanley", "width": 1}, {"from": "Gloucester", "to": "Post", "width": 1}, {"from": "York", "to": "Young Clifford", "width": 3}, {"from": "Buckingham", "to": "King Henry Vi", "width": 10}, {"from": "Buckingham", "to": "Gloucester", "width": 4}, {"from": "Buckingham", "to": "Somerset", "width": 7}, {"from": "Buckingham", "to": "Suffolk", "width": 4}, {"from": "Buckingham", "to": "Salisbury", "width": 3}, {"from": "Buckingham", "to": "Queen Margaret", "width": 6}, {"from": "Buckingham", "to": "Warwick", "width": 3}, {"from": "Buckingham", "to": "York", "width": 13}, {"from": "Buckingham", "to": "Cade", "width": 2}, {"from": "Buckingham", "to": "Cardinal", "width": 4}, {"from": "Buckingham", "to": "First Petitioner", "width": 1}, {"from": "Buckingham", "to": "Second Petitioner", "width": 1}, {"from": "Buckingham", "to": "Peter", "width": 1}, {"from": "Buckingham", "to": "Duchess", "width": 2}, {"from": "Buckingham", "to": "Horner", "width": 1}, {"from": "Buckingham", "to": "Hume", "width": 1}, {"from": "Buckingham", "to": "Spirit", "width": 1}, {"from": "Buckingham", "to": "Margaret Jourdain", "width": 1}, {"from": "Buckingham", "to": "Townsman", "width": 1}, {"from": "Buckingham", "to": "Simpcox", "width": 1}, {"from": "Buckingham", "to": "Wife", "width": 1}, {"from": "Buckingham", "to": "Mayor", "width": 1}, {"from": "Buckingham", "to": "Post", "width": 1}, {"from": "Buckingham", "to": "Say", "width": 1}, {"from": "Buckingham", "to": "Messenger", "width": 2}, {"from": "Buckingham", "to": "Clifford", "width": 3}, {"from": "Buckingham", "to": "Iden", "width": 1}, {"from": "Buckingham", "to": "Edward", "width": 1}, {"from": "Buckingham", "to": "Richard", "width": 1}, {"from": "Buckingham", "to": "Young Clifford", "width": 1}, {"from": "Somerset", "to": "York", "width": 13}, {"from": "Somerset", "to": "Suffolk", "width": 4}, {"from": "Somerset", "to": "Warwick", "width": 4}, {"from": "Somerset", "to": "Vaux", "width": 1}, {"from": "Somerset", "to": "Young Clifford", "width": 1}, {"from": "Salisbury", "to": "Warwick", "width": 8}, {"from": "Salisbury", "to": "York", "width": 8}, {"from": "Salisbury", "to": "Suffolk", "width": 6}, {"from": "Salisbury", "to": "Somerset", "width": 4}, {"from": "Salisbury", "to": "Second Petitioner", "width": 1}, {"from": "Salisbury", "to": "Second Neighbour", "width": 1}, {"from": "Salisbury", "to": "Third Neighbour", "width": 1}, {"from": "Salisbury", "to": "Second Murderer", "width": 1}, {"from": "Salisbury", "to": "Vaux", "width": 1}, {"from": "Salisbury", "to": "Young Clifford", "width": 1}, {"from": "Warwick", "to": "York", "width": 13}, {"from": "Warwick", "to": "Young Clifford", "width": 2}, {"from": "Cardinal", "to": "Gloucester", "width": 6}, {"from": "Cardinal", "to": "Suffolk", "width": 6}, {"from": "Cardinal", "to": "Warwick", "width": 4}, {"from": "Cardinal", "to": "Say", "width": 1}, {"from": "Cardinal", "to": "York", "width": 3}, {"from": "Cardinal", "to": "Vaux", "width": 1}, {"from": "Cardinal", "to": "King Henry Vi", "width": 6}, {"from": "Cardinal", "to": "Queen Margaret", "width": 5}, {"from": "Cardinal", "to": "Salisbury", "width": 4}, {"from": "Cardinal", "to": "Somerset", "width": 4}, {"from": "Cardinal", "to": "First Petitioner", "width": 1}, {"from": "Cardinal", "to": "Second Petitioner", "width": 1}, {"from": "Cardinal", "to": "Peter", "width": 1}, {"from": "Cardinal", "to": "Duchess", "width": 1}, {"from": "Cardinal", "to": "Horner", "width": 1}, {"from": "Cardinal", "to": "Townsman", "width": 1}, {"from": "Cardinal", "to": "Simpcox", "width": 1}, {"from": "Cardinal", "to": "Wife", "width": 1}, {"from": "Cardinal", "to": "Mayor", "width": 1}, {"from": "Cardinal", "to": "Post", "width": 1}, {"from": "Cardinal", "to": "First Murderer", "width": 1}, {"from": "Cardinal", "to": "Second Murderer", "width": 1}, {"from": "Cardinal", "to": "First Murder", "width": 1}, {"from": "Cardinal", "to": "Commons", "width": 1}, {"from": "Duchess", "to": "Gloucester", "width": 6}, {"from": "Duchess", "to": "Hume", "width": 2}, {"from": "Duchess", "to": "Suffolk", "width": 3}, {"from": "Duchess", "to": "York", "width": 4}, {"from": "Duchess", "to": "Stanley", "width": 2}, {"from": "Duchess", "to": "Sheriff", "width": 1}, {"from": "Duchess", "to": "Messenger", "width": 1}, {"from": "Duchess", "to": "First Petitioner", "width": 1}, {"from": "Duchess", "to": "Second Petitioner", "width": 1}, {"from": "Duchess", "to": "Peter", "width": 2}, {"from": "Duchess", "to": "Queen Margaret", "width": 2}, {"from": "Duchess", "to": "King Henry Vi", "width": 2}, {"from": "Duchess", "to": "Somerset", "width": 1}, {"from": "Duchess", "to": "Warwick", "width": 1}, {"from": "Duchess", "to": "Salisbury", "width": 2}, {"from": "Duchess", "to": "Horner", "width": 2}, {"from": "Duchess", "to": "Spirit", "width": 1}, {"from": "Duchess", "to": "Margaret Jourdain", "width": 1}, {"from": "Duchess", "to": "First Neighbour", "width": 1}, {"from": "Duchess", "to": "Second Neighbour", "width": 1}, {"from": "Duchess", "to": "Third Neighbour", "width": 1}, {"from": "Duchess", "to": "Servants", "width": 1}, {"from": "Duchess", "to": "Servant", "width": 1}, {"from": "Duchess", "to": "Herald", "width": 1}, {"from": "Bolingbroke", "to": "Duchess", "width": 2}, {"from": "Bolingbroke", "to": "Master", "width": 2}, {"from": "Bolingbroke", "to": "Hume", "width": 2}, {"from": "Bolingbroke", "to": "Suffolk", "width": 1}, {"from": "Bolingbroke", "to": "Somerset", "width": 1}, {"from": "Bolingbroke", "to": "York", "width": 2}, {"from": "Bolingbroke", "to": "Salisbury", "width": 1}, {"from": "Bolingbroke", "to": "Spirit", "width": 1}, {"from": "Bolingbroke", "to": "Margaret Jourdain", "width": 1}, {"from": "Bolingbroke", "to": "Buckingham", "width": 1}, {"from": "Hume", "to": "Suffolk", "width": 2}, {"from": "Hume", "to": "Messenger", "width": 1}, {"from": "Hume", "to": "Spirit", "width": 1}, {"from": "Hume", "to": "Margaret Jourdain", "width": 1}, {"from": "Hume", "to": "York", "width": 1}, {"from": "Second Petitioner", "to": "Suffolk", "width": 1}, {"from": "Second Petitioner", "to": "York", "width": 1}, {"from": "Second Petitioner", "to": "Somerset", "width": 1}, {"from": "Second Petitioner", "to": "Warwick", "width": 1}, {"from": "Horner", "to": "Peter", "width": 6}, {"from": "Horner", "to": "York", "width": 2}, {"from": "Horner", "to": "Second Petitioner", "width": 1}, {"from": "Horner", "to": "Suffolk", "width": 2}, {"from": "Horner", "to": "Queen Margaret", "width": 2}, {"from": "Horner", "to": "King Henry Vi", "width": 2}, {"from": "Horner", "to": "Somerset", "width": 1}, {"from": "Horner", "to": "Warwick", "width": 1}, {"from": "Horner", "to": "Salisbury", "width": 2}, {"from": "Horner", "to": "Second Neighbour", "width": 1}, {"from": "Horner", "to": "Third Neighbour", "width": 1}, {"from": "Peter", "to": "York", "width": 3}, {"from": "Peter", "to": "Salisbury", "width": 2}, {"from": "Peter", "to": "Second Petitioner", "width": 1}, {"from": "Peter", "to": "Suffolk", "width": 2}, {"from": "Peter", "to": "Queen Margaret", "width": 2}, {"from": "Peter", "to": "Somerset", "width": 1}, {"from": "Peter", "to": "Warwick", "width": 1}, {"from": "Peter", "to": "Second Neighbour", "width": 1}, {"from": "Peter", "to": "Third Neighbour", "width": 1}, {"from": "Richard", "to": "Suffolk", "width": 1}, {"from": "Richard", "to": "York", "width": 8}, {"from": "Richard", "to": "Warwick", "width": 3}, {"from": "Richard", "to": "Somerset", "width": 2}, {"from": "Richard", "to": "Salisbury", "width": 2}, {"from": "Richard", "to": "Young Clifford", "width": 2}, {"from": "Say", "to": "York", "width": 3}, {"from": "Say", "to": "Suffolk", "width": 2}, {"from": "Say", "to": "Smith", "width": 1}, {"from": "Master", "to": "Second Gentleman", "width": 1}, {"from": "Master", "to": "Whitmore", "width": 1}, {"from": "Master", "to": "Suffolk", "width": 1}, {"from": "Edward", "to": "York", "width": 6}, {"from": "Edward", "to": "King Henry Vi", "width": 1}, {"from": "Edward", "to": "Iden", "width": 1}, {"from": "Edward", "to": "Queen Margaret", "width": 1}, {"from": "Edward", "to": "Somerset", "width": 1}, {"from": "Edward", "to": "Richard", "width": 1}, {"from": "Edward", "to": "Salisbury", "width": 1}, {"from": "Edward", "to": "Warwick", "width": 1}, {"from": "Edward", "to": "Young Clifford", "width": 1}, {"from": "Both", "to": "Richard", "width": 1}, {"from": "Both", "to": "York", "width": 1}, {"from": "Both", "to": "Salisbury", "width": 1}, {"from": "Both", "to": "Warwick", "width": 1}, {"from": "First Neighbour", "to": "Horner", "width": 1}, {"from": "First Neighbour", "to": "King Henry Vi", "width": 1}, {"from": "First Neighbour", "to": "Gloucester", "width": 1}, {"from": "First Neighbour", "to": "Queen Margaret", "width": 1}, {"from": "First Neighbour", "to": "Suffolk", "width": 1}, {"from": "First Neighbour", "to": "York", "width": 1}, {"from": "First Neighbour", "to": "Second Neighbour", "width": 1}, {"from": "First Neighbour", "to": "Third Neighbour", "width": 1}, {"from": "First Neighbour", "to": "Peter", "width": 1}, {"from": "First Neighbour", "to": "Salisbury", "width": 1}, {"from": "Sheriff", "to": "Stanley", "width": 1}, {"from": "Cade", "to": "York", "width": 3}, {"from": "Cade", "to": "William Stafford", "width": 1}, {"from": "Cade", "to": "Say", "width": 2}, {"from": "Cade", "to": "Sir Humphrey", "width": 1}, {"from": "Cade", "to": "Dick", "width": 4}, {"from": "Cade", "to": "King Henry Vi", "width": 6}, {"from": "Cade", "to": "Messenger", "width": 3}, {"from": "Cade", "to": "Scales", "width": 1}, {"from": "Cade", "to": "Soldier", "width": 2}, {"from": "Cade", "to": "Smith", "width": 3}, {"from": "Cade", "to": "Clifford", "width": 2}, {"from": "Cade", "to": "Iden", "width": 3}, {"from": "Cade", "to": "Holland", "width": 2}, {"from": "Cade", "to": "Clerk", "width": 1}, {"from": "Cade", "to": "Michael", "width": 1}, {"from": "First Murderer", "to": "Suffolk", "width": 1}, {"from": "First Murderer", "to": "Second Murderer", "width": 1}, {"from": "First Murderer", "to": "King Henry Vi", "width": 1}, {"from": "First Murderer", "to": "Queen Margaret", "width": 1}, {"from": "First Murderer", "to": "Somerset", "width": 1}, {"from": "First Murderer", "to": "Warwick", "width": 1}, {"from": "First Murderer", "to": "Salisbury", "width": 1}, {"from": "First Murderer", "to": "Vaux", "width": 1}, {"from": "Commons", "to": "Salisbury", "width": 2}, {"from": "Commons", "to": "First Murderer", "width": 1}, {"from": "Commons", "to": "Second Murderer", "width": 1}, {"from": "Commons", "to": "First Murder", "width": 1}, {"from": "Commons", "to": "Suffolk", "width": 1}, {"from": "Commons", "to": "King Henry Vi", "width": 1}, {"from": "Commons", "to": "Queen Margaret", "width": 1}, {"from": "Commons", "to": "Somerset", "width": 1}, {"from": "Commons", "to": "Warwick", "width": 1}, {"from": "Commons", "to": "Vaux", "width": 1}, {"from": "Vaux", "to": "Warwick", "width": 1}, {"from": "Captain", "to": "Master", "width": 1}, {"from": "Captain", "to": "Whitmore", "width": 1}, {"from": "Captain", "to": "Warwick", "width": 1}, {"from": "Captain", "to": "York", "width": 1}, {"from": "Captain", "to": "First Gentleman", "width": 1}, {"from": "Captain", "to": "Second Gentleman", "width": 1}, {"from": "Captain", "to": "Suffolk", "width": 1}, {"from": "Bevis", "to": "Cade", "width": 2}, {"from": "Bevis", "to": "Holland", "width": 2}, {"from": "Bevis", "to": "Dick", "width": 2}, {"from": "Bevis", "to": "Smith", "width": 2}, {"from": "Bevis", "to": "Clerk", "width": 1}, {"from": "Bevis", "to": "Michael", "width": 1}, {"from": "Bevis", "to": "Sir Humphrey", "width": 1}, {"from": "Bevis", "to": "William Stafford", "width": 1}, {"from": "Bevis", "to": "Messenger", "width": 1}, {"from": "Bevis", "to": "Say", "width": 1}, {"from": "Dick", "to": "Holland", "width": 2}, {"from": "Dick", "to": "Say", "width": 2}, {"from": "Dick", "to": "Smith", "width": 3}, {"from": "Dick", "to": "Michael", "width": 1}, {"from": "Dick", "to": "Sir Humphrey", "width": 1}, {"from": "Dick", "to": "William Stafford", "width": 1}, {"from": "Dick", "to": "Soldier", "width": 1}, {"from": "Dick", "to": "Messenger", "width": 1}, {"from": "Holland", "to": "Smith", "width": 2}, {"from": "Holland", "to": "Michael", "width": 1}, {"from": "Holland", "to": "Sir Humphrey", "width": 1}, {"from": "Holland", "to": "William Stafford", "width": 1}, {"from": "Holland", "to": "Messenger", "width": 1}, {"from": "Holland", "to": "Say", "width": 1}, {"from": "Smith", "to": "William Stafford", "width": 1}, {"from": "Smith", "to": "Soldier", "width": 1}, {"from": "Michael", "to": "Sir Humphrey", "width": 1}, {"from": "Michael", "to": "Smith", "width": 1}, {"from": "Michael", "to": "William Stafford", "width": 1}, {"from": "Sir Humphrey", "to": "Smith", "width": 1}, {"from": "Sir Humphrey", "to": "William Stafford", "width": 1}, {"from": "William Stafford", "to": "York", "width": 1}, {"from": "Herald", "to": "Sir Humphrey", "width": 1}, {"from": "Herald", "to": "Servants", "width": 1}, {"from": "Herald", "to": "Servant", "width": 1}, {"from": "Herald", "to": "Sheriff", "width": 1}, {"from": "Herald", "to": "Stanley", "width": 1}, {"from": "Messenger", "to": "Sir Humphrey", "width": 1}, {"from": "Messenger", "to": "Say", "width": 2}, {"from": "Messenger", "to": "York", "width": 1}, {"from": "Messenger", "to": "Somerset", "width": 1}, {"from": "Messenger", "to": "Queen Margaret", "width": 1}, {"from": "Messenger", "to": "Smith", "width": 1}, {"from": "Clifford", "to": "Queen Margaret", "width": 3}, {"from": "Clifford", "to": "York", "width": 5}, {"from": "Clifford", "to": "King Henry Vi", "width": 3}, {"from": "Clifford", "to": "Warwick", "width": 5}, {"from": "Clifford", "to": "Young Clifford", "width": 2}, {"from": "Clifford", "to": "Messenger", "width": 1}, {"from": "Clifford", "to": "Somerset", "width": 2}, {"from": "Clifford", "to": "Iden", "width": 1}, {"from": "Clifford", "to": "Edward", "width": 1}, {"from": "Clifford", "to": "Richard", "width": 2}, {"from": "Clifford", "to": "Salisbury", "width": 1}, {"from": "Iden", "to": "King Henry Vi", "width": 1}, {"from": "Iden", "to": "York", "width": 1}, {"from": "Iden", "to": "Queen Margaret", "width": 1}, {"from": "Iden", "to": "Somerset", "width": 1}, {"from": "Iden", "to": "Richard", "width": 1}, {"from": "Iden", "to": "Salisbury", "width": 1}, {"from": "Iden", "to": "Warwick", "width": 1}, {"from": "Iden", "to": "Young Clifford", "width": 1}, {"from": "First Petitioner", "to": "Second Petitioner", "width": 1}, {"from": "First Petitioner", "to": "Peter", "width": 1}, {"from": "First Petitioner", "to": "Suffolk", "width": 1}, {"from": "First Petitioner", "to": "Queen Margaret", "width": 1}, {"from": "First Petitioner", "to": "King Henry Vi", "width": 1}, {"from": "First Petitioner", "to": "York", "width": 1}, {"from": "First Petitioner", "to": "Somerset", "width": 1}, {"from": "First Petitioner", "to": "Warwick", "width": 1}, {"from": "First Petitioner", "to": "Salisbury", "width": 1}, {"from": "First Petitioner", "to": "Gloucester", "width": 1}, {"from": "First Petitioner", "to": "Horner", "width": 1}, {"from": "Spirit", "to": "York", "width": 1}, {"from": "Margaret Jourdain", "to": "Spirit", "width": 1}, {"from": "Margaret Jourdain", "to": "York", "width": 1}, {"from": "Townsman", "to": "Wife", "width": 1}, {"from": "Simpcox", "to": "Suffolk", "width": 1}, {"from": "Simpcox", "to": "Townsman", "width": 1}, {"from": "Simpcox", "to": "Wife", "width": 1}, {"from": "Mayor", "to": "Queen Margaret", "width": 1}, {"from": "Mayor", "to": "Suffolk", "width": 1}, {"from": "Mayor", "to": "Townsman", "width": 1}, {"from": "Mayor", "to": "Simpcox", "width": 1}, {"from": "Mayor", "to": "Wife", "width": 1}, {"from": "Beadle", "to": "Queen Margaret", "width": 1}, {"from": "Beadle", "to": "King Henry Vi", "width": 1}, {"from": "Beadle", "to": "Suffolk", "width": 1}, {"from": "Beadle", "to": "Gloucester", "width": 1}, {"from": "Beadle", "to": "Cardinal", "width": 1}, {"from": "Beadle", "to": "Townsman", "width": 1}, {"from": "Beadle", "to": "Simpcox", "width": 1}, {"from": "Beadle", "to": "Wife", "width": 1}, {"from": "Beadle", "to": "Mayor", "width": 1}, {"from": "Beadle", "to": "Buckingham", "width": 1}, {"from": "Second Neighbour", "to": "Suffolk", "width": 1}, {"from": "Second Neighbour", "to": "York", "width": 1}, {"from": "Second Neighbour", "to": "Third Neighbour", "width": 1}, {"from": "Third Neighbour", "to": "York", "width": 1}, {"from": "Servants", "to": "Sheriff", "width": 1}, {"from": "Servants", "to": "Stanley", "width": 1}, {"from": "Servant", "to": "Servants", "width": 1}, {"from": "Servant", "to": "Sheriff", "width": 1}, {"from": "Servant", "to": "Stanley", "width": 1}, {"from": "Post", "to": "Queen Margaret", "width": 1}, {"from": "Post", "to": "Suffolk", "width": 1}, {"from": "Post", "to": "York", "width": 1}, {"from": "Post", "to": "Somerset", "width": 1}, {"from": "Second Murderer", "to": "Suffolk", "width": 1}, {"from": "Second Murderer", "to": "Somerset", "width": 1}, {"from": "Second Murderer", "to": "Warwick", "width": 1}, {"from": "Second Murderer", "to": "Vaux", "width": 1}, {"from": "First Murder", "to": "First Murderer", "width": 1}, {"from": "First Murder", "to": "Second Murderer", "width": 1}, {"from": "First Murder", "to": "Suffolk", "width": 1}, {"from": "First Murder", "to": "King Henry Vi", "width": 1}, {"from": "First Murder", "to": "Queen Margaret", "width": 1}, {"from": "First Murder", "to": "Somerset", "width": 1}, {"from": "First Murder", "to": "Warwick", "width": 1}, {"from": "First Murder", "to": "Salisbury", "width": 1}, {"from": "First Murder", "to": "Vaux", "width": 1}, {"from": "First Gentleman", "to": "Master", "width": 1}, {"from": "First Gentleman", "to": "Second Gentleman", "width": 1}, {"from": "First Gentleman", "to": "Whitmore", "width": 1}, {"from": "First Gentleman", "to": "Suffolk", "width": 1}, {"from": "Second Gentleman", "to": "Whitmore", "width": 1}, {"from": "Second Gentleman", "to": "Suffolk", "width": 1}, {"from": "Clerk", "to": "Holland", "width": 1}, {"from": "Clerk", "to": "Dick", "width": 1}, {"from": "Clerk", "to": "Smith", "width": 1}, {"from": "Clerk", "to": "Michael", "width": 1}, {"from": "Clerk", "to": "Sir Humphrey", "width": 1}, {"from": "Clerk", "to": "William Stafford", "width": 1}, {"from": "First Citizen", "to": "Scales", "width": 1}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+                    network.on("click", neighbourhoodHighlight);
+                  
+
+                  
+                    network.on("selectNode", neighbourhoodHighlight);
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>
