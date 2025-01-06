@@ -16,7 +16,8 @@ ruler = nlp.add_pipe("entity_ruler", before="ner")
 df = pd.read_csv("data/plays/Macbeth.csv")
 
 # Get list of normalized character names to add to NER ruleset
-characters = df["character"].unique().tolist()
+characters = [name for name in df["character"].unique().tolist() if name != "All"]
+original_character_map = {name.lower(): name for name in characters}
 characters_normalized = list(map(str.lower, characters))
 patterns = [{"label": "PERSON", "pattern": name} for name in characters]
 ruler.add_patterns(patterns)
@@ -31,11 +32,8 @@ df_filtered = df[df["entities"].apply(len) > 0]
 scenes = df.groupby(["act", "scene"])
 explicit_relation_counts = Counter()
 implicit_relation_counts = Counter()
-bm_scenes = [] # scenes with Banquo and Macbeth
 for (act, scene), lines in scenes:
-    scene_chars = lines["character"].unique()
-    if "Banquo" in scene_chars and "Macbeth" in scene_chars:
-        bm_scenes.append((act, scene))
+    scene_chars = [name for name in lines["character"].unique() if name != "All"]
     associations = [] # used to keep track of explicit relations in a scene when checking implicit relations
 
     # Organize the relationships pairwise according to a commutative/undirected (1st party, 2nd party) order
@@ -43,8 +41,13 @@ for (act, scene), lines in scenes:
     for _, row in lines.iterrows():
         mentioned = row["entities"]
         speaker = row["character"]
+
+        # Skip if the speaker is "All"; only want individuals
+        if speaker == "All":
+            continue
+
         for mention in mentioned:
-            if speaker != mention:
+            if speaker != mention and mention != "All":
                 ordered_pair = (speaker, mention)
                 unordered_pair = tuple(sorted((speaker, mention)))
                 associations.append(unordered_pair)
@@ -68,7 +71,3 @@ for key, _ in sorted(total_counts.items(), key=lambda item: item[1], reverse=Fal
     print("\n"*2)
 
 print(scenes["character"].unique()) # print each scene and their explicit entities mentionec
-
-new_df = df[(df["character"] == "Banquo") & (df["text"].str.contains("Macbeth", case=False, na=False))]
-print(new_df[["character", "text", "entities"]]) # print scenes where Banquo mentions Macbeth explicitly
-print(bm_scenes) # print scenes with both Banquo and Macbeth for implicit relation testing
