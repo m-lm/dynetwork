@@ -74,17 +74,17 @@ for play in plays:
                 associations.append(unordered_pair)
                 implicit_relation_counts[unordered_pair] += 1
 
-    total_counts = explicit_relation_counts + implicit_relation_counts
     # Convert lowercase normalized names to original proper case and check if gathered names are in the list of play characters who participate
     # Note this primarily only works for plays as we have a convenient list of characters in the play and the worldbuilding does not cross this boundary.
     # However, longer more complex works like epic fantasy or scifi should include those nonpresent 3rd parties mentioned even if they do not actively participate. This is for worldbulding reasons.
-    total_counts = {(original_character_map[a], original_character_map[b]): count for (a, b), count in total_counts.items() if a in original_character_map and b in original_character_map}
+    explicit_relation_counts = Counter({(original_character_map[a], original_character_map[b]): count for (a, b), count in explicit_relation_counts.items() if a in original_character_map and b in original_character_map})
+    implicit_relation_counts = Counter({(original_character_map[a], original_character_map[b]): count for (a, b), count in implicit_relation_counts.items() if a in original_character_map and b in original_character_map})
+    total_counts = explicit_relation_counts + implicit_relation_counts
     for key, _ in sorted(total_counts.items(), key=lambda item: item[1], reverse=False):
         print("KEY: ", key)
         print("TOTAL: ", total_counts[key])
-        # for explicit/implicit lookups, lower() the tuple values
-        print("EXPLICIT: ", explicit_relation_counts[(key[0].lower(), key[1].lower())])
-        print("IMPLICIT: ", implicit_relation_counts[(key[0].lower(), key[1].lower())])
+        print("EXPLICIT: ", explicit_relation_counts[key])
+        print("IMPLICIT: ", implicit_relation_counts[key])
         print("\n"*2)
 
     print(scenes["character"].unique()) # print each scene and their explicit entities mentioned
