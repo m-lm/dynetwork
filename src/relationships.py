@@ -3,6 +3,7 @@ from spacytextblob.spacytextblob import SpacyTextBlob
 import pandas as pd
 import numpy as np
 import networkx as nx
+from pyvis.network import Network
 from dask.distributed import LocalCluster
 from collections import Counter
 import os
@@ -71,3 +72,22 @@ for key, _ in sorted(total_counts.items(), key=lambda item: item[1], reverse=Fal
     print("\n"*2)
 
 print(scenes["character"].unique()) # print each scene and their explicit entities mentionec
+
+# Visualize character relations as signed weighed graph
+G = nx.DiGraph()
+
+for relation, weight in total_counts.items():
+    G.add_edge(relation[0], relation[1], weight=weight)
+
+viz = Network(
+    notebook=True, 
+    cdn_resources="remote",
+    neighborhood_highlight=True,
+    select_menu=True,
+    filter_menu=True,
+    )
+viz.toggle_physics(True)
+for node in G.nodes():
+    viz.add_node(node, label=node, size=G.degree(node))
+viz.from_nx(G)
+viz.show("viz/emonet.html")

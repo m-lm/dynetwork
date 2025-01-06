@@ -1,0 +1,712 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script>function neighbourhoodHighlight(params) {
+  // console.log("in nieghbourhoodhighlight");
+  allNodes = nodes.get({ returnType: "Object" });
+  // originalNodes = JSON.parse(JSON.stringify(allNodes));
+  // if something is selected:
+  if (params.nodes.length > 0) {
+    highlightActive = true;
+    var i, j;
+    var selectedNode = params.nodes[0];
+    var degrees = 2;
+
+    // mark all nodes as hard to read.
+    for (let nodeId in allNodes) {
+      // nodeColors[nodeId] = allNodes[nodeId].color;
+      allNodes[nodeId].color = "rgba(200,200,200,0.5)";
+      if (allNodes[nodeId].hiddenLabel === undefined) {
+        allNodes[nodeId].hiddenLabel = allNodes[nodeId].label;
+        allNodes[nodeId].label = undefined;
+      }
+    }
+    var connectedNodes = network.getConnectedNodes(selectedNode);
+    var allConnectedNodes = [];
+
+    // get the second degree nodes
+    for (i = 1; i < degrees; i++) {
+      for (j = 0; j < connectedNodes.length; j++) {
+        allConnectedNodes = allConnectedNodes.concat(
+          network.getConnectedNodes(connectedNodes[j])
+        );
+      }
+    }
+
+    // all second degree nodes get a different color and their label back
+    for (i = 0; i < allConnectedNodes.length; i++) {
+      // allNodes[allConnectedNodes[i]].color = "pink";
+      allNodes[allConnectedNodes[i]].color = "rgba(150,150,150,0.75)";
+      if (allNodes[allConnectedNodes[i]].hiddenLabel !== undefined) {
+        allNodes[allConnectedNodes[i]].label =
+          allNodes[allConnectedNodes[i]].hiddenLabel;
+        allNodes[allConnectedNodes[i]].hiddenLabel = undefined;
+      }
+    }
+
+    // all first degree nodes get their own color and their label back
+    for (i = 0; i < connectedNodes.length; i++) {
+      // allNodes[connectedNodes[i]].color = undefined;
+      allNodes[connectedNodes[i]].color = nodeColors[connectedNodes[i]];
+      if (allNodes[connectedNodes[i]].hiddenLabel !== undefined) {
+        allNodes[connectedNodes[i]].label =
+          allNodes[connectedNodes[i]].hiddenLabel;
+        allNodes[connectedNodes[i]].hiddenLabel = undefined;
+      }
+    }
+
+    // the main node gets its own color and its label back.
+    // allNodes[selectedNode].color = undefined;
+    allNodes[selectedNode].color = nodeColors[selectedNode];
+    if (allNodes[selectedNode].hiddenLabel !== undefined) {
+      allNodes[selectedNode].label = allNodes[selectedNode].hiddenLabel;
+      allNodes[selectedNode].hiddenLabel = undefined;
+    }
+  } else if (highlightActive === true) {
+    // console.log("highlightActive was true");
+    // reset all nodes
+    for (let nodeId in allNodes) {
+      // allNodes[nodeId].color = "purple";
+      allNodes[nodeId].color = nodeColors[nodeId];
+      // delete allNodes[nodeId].color;
+      if (allNodes[nodeId].hiddenLabel !== undefined) {
+        allNodes[nodeId].label = allNodes[nodeId].hiddenLabel;
+        allNodes[nodeId].hiddenLabel = undefined;
+      }
+    }
+    highlightActive = false;
+  }
+
+  // transform the object into an array
+  var updateArray = [];
+  if (params.nodes.length > 0) {
+    for (let nodeId in allNodes) {
+      if (allNodes.hasOwnProperty(nodeId)) {
+        // console.log(allNodes[nodeId]);
+        updateArray.push(allNodes[nodeId]);
+      }
+    }
+    nodes.update(updateArray);
+  } else {
+    // console.log("Nothing was selected");
+    for (let nodeId in allNodes) {
+      if (allNodes.hasOwnProperty(nodeId)) {
+        // console.log(allNodes[nodeId]);
+        // allNodes[nodeId].color = {};
+        updateArray.push(allNodes[nodeId]);
+      }
+    }
+    nodes.update(updateArray);
+  }
+}
+
+function filterHighlight(params) {
+  allNodes = nodes.get({ returnType: "Object" });
+  // if something is selected:
+  if (params.nodes.length > 0) {
+    filterActive = true;
+    let selectedNodes = params.nodes;
+
+    // hiding all nodes and saving the label
+    for (let nodeId in allNodes) {
+      allNodes[nodeId].hidden = true;
+      if (allNodes[nodeId].savedLabel === undefined) {
+        allNodes[nodeId].savedLabel = allNodes[nodeId].label;
+        allNodes[nodeId].label = undefined;
+      }
+    }
+
+    for (let i=0; i < selectedNodes.length; i++) {
+      allNodes[selectedNodes[i]].hidden = false;
+      if (allNodes[selectedNodes[i]].savedLabel !== undefined) {
+        allNodes[selectedNodes[i]].label = allNodes[selectedNodes[i]].savedLabel;
+        allNodes[selectedNodes[i]].savedLabel = undefined;
+      }
+    }
+
+  } else if (filterActive === true) {
+    // reset all nodes
+    for (let nodeId in allNodes) {
+      allNodes[nodeId].hidden = false;
+      if (allNodes[nodeId].savedLabel !== undefined) {
+        allNodes[nodeId].label = allNodes[nodeId].savedLabel;
+        allNodes[nodeId].savedLabel = undefined;
+      }
+    }
+    filterActive = false;
+  }
+
+  // transform the object into an array
+  var updateArray = [];
+  if (params.nodes.length > 0) {
+    for (let nodeId in allNodes) {
+      if (allNodes.hasOwnProperty(nodeId)) {
+        updateArray.push(allNodes[nodeId]);
+      }
+    }
+    nodes.update(updateArray);
+  } else {
+    for (let nodeId in allNodes) {
+      if (allNodes.hasOwnProperty(nodeId)) {
+        updateArray.push(allNodes[nodeId]);
+      }
+    }
+    nodes.update(updateArray);
+  }
+}
+
+function selectNode(nodes) {
+  network.selectNodes(nodes);
+  neighbourhoodHighlight({ nodes: nodes });
+  return nodes;
+}
+
+function selectNodes(nodes) {
+  network.selectNodes(nodes);
+  filterHighlight({nodes: nodes});
+  return nodes;
+}
+
+function highlightFilter(filter) {
+  let selectedNodes = []
+  let selectedProp = filter['property']
+  if (filter['item'] === 'node') {
+    let allNodes = nodes.get({ returnType: "Object" });
+    for (let nodeId in allNodes) {
+      if (allNodes[nodeId][selectedProp] && filter['value'].includes((allNodes[nodeId][selectedProp]).toString())) {
+        selectedNodes.push(nodeId)
+      }
+    }
+  }
+  else if (filter['item'] === 'edge'){
+    let allEdges = edges.get({returnType: 'object'});
+    // check if the selected property exists for selected edge and select the nodes connected to the edge
+    for (let edge in allEdges) {
+      if (allEdges[edge][selectedProp] && filter['value'].includes((allEdges[edge][selectedProp]).toString())) {
+        selectedNodes.push(allEdges[edge]['from'])
+        selectedNodes.push(allEdges[edge]['to'])
+      }
+    }
+  }
+  selectNodes(selectedNodes)
+}</script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+            
+            
+            
+            
+            
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tom-select/2.0.0-rc.4/css/tom-select.min.css" integrity="sha512-43fHB3GLgZfz8QXl1RPQ8O66oIgv3po9cJ5erMt1c4QISq9dYb195T3vr5ImnJPXuVroKcGBPXBFKETW8jrPNQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/tom-select/2.0.0-rc.4/js/tom-select.complete.js" integrity="sha512-jeF9CfnvzDiw9G9xiksVjxR2lib44Gnovvkv+3CgCG6NXCD4gqlA5nDAVW5WjpA+i+/zKsUWV5xNEbW1X/HH0Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 600px;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+                <div id="select-menu" class="card-header">
+                    <div class="row no-gutters">
+                        <div class="col-10 pb-2">
+                            <select
+                            class="form-select"
+                            aria-label="Default select example"
+                            onchange="selectNode([value]);"
+                            id="select-node"
+                            placeholder="Select node..."
+                            >
+                                <option selected>Select a Node by ID</option>
+                                
+                                    <option value="Macbeth">Macbeth</option>
+                                
+                                    <option value="Third Witch">Third Witch</option>
+                                
+                                    <option value="First Witch">First Witch</option>
+                                
+                                    <option value="Graymalkin">Graymalkin</option>
+                                
+                                    <option value="Macdonwald">Macdonwald</option>
+                                
+                                    <option value="Sergeant">Sergeant</option>
+                                
+                                    <option value="Worthy">Worthy</option>
+                                
+                                    <option value="Duncan">Duncan</option>
+                                
+                                    <option value="worthy gentleman">worthy gentleman</option>
+                                
+                                    <option value="Mark">Mark</option>
+                                
+                                    <option value="Banquo">Banquo</option>
+                                
+                                    <option value="Golgotha">Golgotha</option>
+                                
+                                    <option value="Malcolm">Malcolm</option>
+                                
+                                    <option value="Ross">Ross</option>
+                                
+                                    <option value="Cawdor">Cawdor</option>
+                                
+                                    <option value="Bellona">Bellona</option>
+                                
+                                    <option value="Sweno">Sweno</option>
+                                
+                                    <option value="Norways">Norways</option>
+                                
+                                    <option value="Weary sennights">Weary sennights</option>
+                                
+                                    <option value="Forres">Forres</option>
+                                
+                                    <option value="Second Witch">Second Witch</option>
+                                
+                                    <option value="Glamis">Glamis</option>
+                                
+                                    <option value="Lady Macbeth">Lady Macbeth</option>
+                                
+                                    <option value="Herein">Herein</option>
+                                
+                                    <option value="kinsman">kinsman</option>
+                                
+                                    <option value="Thou">Thou</option>
+                                
+                                    <option value="Hecate">Hecate</option>
+                                
+                                    <option value="Tarquin">Tarquin</option>
+                                
+                                    <option value="ho">ho</option>
+                                
+                                    <option value="Donalbain">Donalbain</option>
+                                
+                                    <option value="Faith">Faith</option>
+                                
+                                    <option value="Porter">Porter</option>
+                                
+                                    <option value="Marry">Marry</option>
+                                
+                                    <option value="Lord">Lord</option>
+                                
+                                    <option value="Macduff">Macduff</option>
+                                
+                                    <option value="gore">gore</option>
+                                
+                                    <option value="kno">kno</option>
+                                
+                                    <option value="DONALBAIN">DONALBAIN</option>
+                                
+                                    <option value="MALCOLM">MALCOLM</option>
+                                
+                                    <option value="Old Man">Old Man</option>
+                                
+                                    <option value="Tis">Tis</option>
+                                
+                                    <option value="Fleance">Fleance</option>
+                                
+                                    <option value="Sirrah">Sirrah</option>
+                                
+                                    <option value="Mark Antonys">Mark Antonys</option>
+                                
+                                    <option value="First Murderer">First Murderer</option>
+                                
+                                    <option value="lives">lives</option>
+                                
+                                    <option value="Third Murderer">Third Murderer</option>
+                                
+                                    <option value="inn">inn</option>
+                                
+                                    <option value="Lennox">Lennox</option>
+                                
+                                    <option value="Mayt">Mayt</option>
+                                
+                                    <option value="lo">lo</option>
+                                
+                                    <option value="Edward">Edward</option>
+                                
+                                    <option value="Siward">Siward</option>
+                                
+                                    <option value="wolf">wolf</option>
+                                
+                                    <option value="First Apparition">First Apparition</option>
+                                
+                                    <option value="more">more</option>
+                                
+                                    <option value="Second Apparition">Second Apparition</option>
+                                
+                                    <option value="Third Apparition">Third Apparition</option>
+                                
+                                    <option value="Lady Macduff">Lady Macduff</option>
+                                
+                                    <option value="Stands Scotland">Stands Scotland</option>
+                                
+                                    <option value="Convert">Convert</option>
+                                
+                                    <option value="Gentlewoman">Gentlewoman</option>
+                                
+                                    <option value="Lo">Lo</option>
+                                
+                                    <option value="Menteith">Menteith</option>
+                                
+                                    <option value="Caithness">Caithness</option>
+                                
+                                    <option value="Servant">Servant</option>
+                                
+                                    <option value="Soldiers">Soldiers</option>
+                                
+                                    <option value="Seyton">Seyton</option>
+                                
+                                    <option value="Pluck">Pluck</option>
+                                
+                                    <option value="Doctor">Doctor</option>
+                                
+                                    <option value="Err">Err</option>
+                                
+                                    <option value="Blow">Blow</option>
+                                
+                                    <option value="Angus">Angus</option>
+                                
+                                    <option value="Messenger">Messenger</option>
+                                
+                                    <option value="Attendant">Attendant</option>
+                                
+                                    <option value="Second Murderer">Second Murderer</option>
+                                
+                                    <option value="Both Murderers">Both Murderers</option>
+                                
+                                    <option value="Lords">Lords</option>
+                                
+                                    <option value="Son">Son</option>
+                                
+                                    <option value="Young Siward">Young Siward</option>
+                                
+                            </select>
+                        </div>
+                        <div class="col-2 pb-2">
+                            <button type="button" class="btn btn-primary btn-block" onclick="neighbourhoodHighlight({nodes: []});">Reset Selection</button>
+                        </div>
+                    </div>
+                </div>
+            
+            
+              <div id="filter-menu" class="card-header">
+                <div class="row no-gutters">
+                  <div class="col-3 pb-2">
+                    <select
+                            class="form-select"
+                            aria-label="Default select example"
+                            onchange="updateFilter(value, 'item')"
+                            id="select-item"
+                        >
+                        <option value="">Select a network item</option>
+                        <option value="edge">edge</option>
+                        <option value="node">node</option>
+                    </select>
+                  </div>
+                  <div class="col-3 pb-2">
+                    <select
+                            class="form-select"
+                            aria-label="Default select example"
+                            onchange="updateFilter(value, 'property')"
+                            id="select-property"
+                        >
+                        <option value="">Select a property...</option>
+                    </select>
+                  </div>
+                  <div class="col-3 pb-2">
+                    <select
+                            class="form-select"
+                            aria-label="Default select example"
+                            id="select-value"
+                        >
+                        <option value="">Select value(s)...</option>
+                    </select>
+                  </div>
+                  <div class="col-1 pb-2">
+                    <button type="button" class="btn btn-primary btn-block" onclick="highlightFilter(filter);">Filter</button>
+                  </div>
+                  <div class="col-2 pb-2">
+                    <button type="button" class="btn btn-primary btn-block" onclick="clearFilter(true)">Reset Selection</button>
+                  </div>
+                </div>
+              </div>
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+                  new TomSelect("#select-node",{
+                      create: false,
+                      sortField: {
+                          field: "text",
+                          direction: "asc"
+                      }
+                  });
+              
+
+              
+                  // explicitly using onItemAdd and this function as we need to save multiple values
+                  let updateValueFilter = function() {
+                      return function () {
+                      filter['value'].push(arguments[0])
+                      }
+                  }
+
+                  let valueControl = new TomSelect("#select-value",{
+                      maxItems: null,
+                      valueField: 'id',
+                      labelField: 'title',
+                      searchField: 'title',
+                      create: false,
+                      sortField: {
+                          field: "text",
+                          direction: "asc"
+                      },
+                      onItemAdd: updateValueFilter()
+                  });
+
+                  let addValues = function() {
+                      return function () {
+                          // clear the current value options and add the selected attribute values
+                          // tom-select handles duplicates
+                          let selectedProperty = arguments[0];
+                          valueControl.clear();
+                          valueControl.clearOptions();
+                          filter['value'] = []
+                          if (filter['item'] === 'node') {
+                              for (let each in allNodes) {
+                                  valueControl.addOption({
+                                      id:allNodes[each][selectedProperty],
+                                      title:allNodes[each][selectedProperty]
+                                  })
+                              }
+                          }
+                          else if (filter['item'] === 'edge') {
+                              for (let each in allEdges) {
+                                  valueControl.addOption({
+                                      id:allEdges[each][selectedProperty],
+                                      title:allEdges[each][selectedProperty]
+                                  })
+                              }
+                          }
+                      }
+                  };
+
+                  let propControl = new TomSelect("#select-property",{
+                      valueField: 'id',
+                      labelField: 'title',
+                      searchField: 'title',
+                      create: false,
+                      sortField: {
+                          field: "text",
+                          direction: "asc"
+                      },
+                      onItemAdd: addValues()
+                  });
+
+                  let addProperties = function() {
+                      return function () {
+                          // loops through the selected network item and adds the attributes to dropdown
+                          // tom-select handles duplicates
+                          clearFilter(false)
+                          if (arguments[0] === 'edge') {
+                              for (let each in allEdges) {
+                                  if (allEdges.hasOwnProperty(each)) {
+                                      for (let eachProp in allEdges[each]) {
+                                          if (allEdges[each].hasOwnProperty(eachProp)) {
+                                              propControl.addOption({id: eachProp, title: eachProp})
+                                          }
+                                      }
+                                  }
+                              }
+                          }
+                          else if (arguments[0] === 'node') {
+                              for (let each in allNodes) {
+                                  if (allNodes.hasOwnProperty(each)) {
+                                      for (let eachProp in allNodes[each]) {
+                                          if (allNodes[each].hasOwnProperty(eachProp)
+                                              && (eachProp !== 'hidden' && eachProp !== 'savedLabel'
+                                                  && eachProp !== 'hiddenLabel')) {
+                                              propControl.addOption({id: eachProp, title: eachProp})
+
+                                          }
+                                      }
+                                  }
+                              }
+                          }
+                      }
+                  };
+
+                  let itemControl = new TomSelect("#select-item",{
+                      create: false,
+                      sortField:{
+                          field: "text",
+                          direction: "asc"
+                      },
+                      onItemAdd: addProperties()
+                  });
+
+                  function clearFilter(reset) {
+                      // utility function to clear all the selected filter options
+                      // if reset is set to true, the existing filter will be removed
+                      // else, only the dropdown options are cleared
+                      propControl.clear();
+                      propControl.clearOptions();
+                      valueControl.clear();
+                      valueControl.clearOptions();
+                      filter = {
+                          item : '',
+                          property : '',
+                          value : []
+                      }
+                      if (reset) {
+                          itemControl.clear();
+                          filterHighlight({nodes: []})
+                      }
+                  }
+
+                  function updateFilter(value, key) {
+                      // key could be 'item' or 'property' and value is as selected in dropdown
+                      filter[key] = value
+                  }
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#97c2fc", "id": "Macbeth", "label": "Macbeth", "shape": "dot", "size": 45}, {"color": "#97c2fc", "id": "Third Witch", "label": "Third Witch", "shape": "dot", "size": 12}, {"color": "#97c2fc", "id": "First Witch", "label": "First Witch", "shape": "dot", "size": 13}, {"color": "#97c2fc", "id": "Graymalkin", "label": "Graymalkin", "shape": "dot", "size": 1}, {"color": "#97c2fc", "id": "Macdonwald", "label": "Macdonwald", "shape": "dot", "size": 1}, {"color": "#97c2fc", "id": "Sergeant", "label": "Sergeant", "shape": "dot", "size": 9}, {"color": "#97c2fc", "id": "Worthy", "label": "Worthy", "shape": "dot", "size": 1}, {"color": "#97c2fc", "id": "Duncan", "label": "Duncan", "shape": "dot", "size": 11}, {"color": "#97c2fc", "id": "worthy gentleman", "label": "worthy gentleman", "shape": "dot", "size": 1}, {"color": "#97c2fc", "id": "Mark", "label": "Mark", "shape": "dot", "size": 1}, {"color": "#97c2fc", "id": "Banquo", "label": "Banquo", "shape": "dot", "size": 23}, {"color": "#97c2fc", "id": "Golgotha", "label": "Golgotha", "shape": "dot", "size": 1}, {"color": "#97c2fc", "id": "Malcolm", "label": "Malcolm", "shape": "dot", "size": 18}, {"color": "#97c2fc", "id": "Ross", "label": "Ross", "shape": "dot", "size": 24}, {"color": "#97c2fc", "id": "Cawdor", "label": "Cawdor", "shape": "dot", "size": 6}, {"color": "#97c2fc", "id": "Bellona", "label": "Bellona", "shape": "dot", "size": 1}, {"color": "#97c2fc", "id": "Sweno", "label": "Sweno", "shape": "dot", "size": 1}, {"color": "#97c2fc", "id": "Norways", "label": "Norways", "shape": "dot", "size": 1}, {"color": "#97c2fc", "id": "Weary sennights", "label": "Weary sennights", "shape": "dot", "size": 1}, {"color": "#97c2fc", "id": "Forres", "label": "Forres", "shape": "dot", "size": 1}, {"color": "#97c2fc", "id": "Second Witch", "label": "Second Witch", "shape": "dot", "size": 12}, {"color": "#97c2fc", "id": "Glamis", "label": "Glamis", "shape": "dot", "size": 2}, {"color": "#97c2fc", "id": "Lady Macbeth", "label": "Lady Macbeth", "shape": "dot", "size": 20}, {"color": "#97c2fc", "id": "Herein", "label": "Herein", "shape": "dot", "size": 1}, {"color": "#97c2fc", "id": "kinsman", "label": "kinsman", "shape": "dot", "size": 1}, {"color": "#97c2fc", "id": "Thou", "label": "Thou", "shape": "dot", "size": 1}, {"color": "#97c2fc", "id": "Hecate", "label": "Hecate", "shape": "dot", "size": 8}, {"color": "#97c2fc", "id": "Tarquin", "label": "Tarquin", "shape": "dot", "size": 1}, {"color": "#97c2fc", "id": "ho", "label": "ho", "shape": "dot", "size": 3}, {"color": "#97c2fc", "id": "Donalbain", "label": "Donalbain", "shape": "dot", "size": 9}, {"color": "#97c2fc", "id": "Faith", "label": "Faith", "shape": "dot", "size": 1}, {"color": "#97c2fc", "id": "Porter", "label": "Porter", "shape": "dot", "size": 9}, {"color": "#97c2fc", "id": "Marry", "label": "Marry", "shape": "dot", "size": 1}, {"color": "#97c2fc", "id": "Lord", "label": "Lord", "shape": "dot", "size": 5}, {"color": "#97c2fc", "id": "Macduff", "label": "Macduff", "shape": "dot", "size": 17}, {"color": "#97c2fc", "id": "gore", "label": "gore", "shape": "dot", "size": 1}, {"color": "#97c2fc", "id": "kno", "label": "kno", "shape": "dot", "size": 1}, {"color": "#97c2fc", "id": "DONALBAIN", "label": "DONALBAIN", "shape": "dot", "size": 1}, {"color": "#97c2fc", "id": "MALCOLM", "label": "MALCOLM", "shape": "dot", "size": 1}, {"color": "#97c2fc", "id": "Old Man", "label": "Old Man", "shape": "dot", "size": 3}, {"color": "#97c2fc", "id": "Tis", "label": "Tis", "shape": "dot", "size": 1}, {"color": "#97c2fc", "id": "Fleance", "label": "Fleance", "shape": "dot", "size": 4}, {"color": "#97c2fc", "id": "Sirrah", "label": "Sirrah", "shape": "dot", "size": 2}, {"color": "#97c2fc", "id": "Mark Antonys", "label": "Mark Antonys", "shape": "dot", "size": 1}, {"color": "#97c2fc", "id": "First Murderer", "label": "First Murderer", "shape": "dot", "size": 16}, {"color": "#97c2fc", "id": "lives", "label": "lives", "shape": "dot", "size": 1}, {"color": "#97c2fc", "id": "Third Murderer", "label": "Third Murderer", "shape": "dot", "size": 4}, {"color": "#97c2fc", "id": "inn", "label": "inn", "shape": "dot", "size": 1}, {"color": "#97c2fc", "id": "Lennox", "label": "Lennox", "shape": "dot", "size": 26}, {"color": "#97c2fc", "id": "Mayt", "label": "Mayt", "shape": "dot", "size": 1}, {"color": "#97c2fc", "id": "lo", "label": "lo", "shape": "dot", "size": 1}, {"color": "#97c2fc", "id": "Edward", "label": "Edward", "shape": "dot", "size": 1}, {"color": "#97c2fc", "id": "Siward", "label": "Siward", "shape": "dot", "size": 9}, {"color": "#97c2fc", "id": "wolf", "label": "wolf", "shape": "dot", "size": 1}, {"color": "#97c2fc", "id": "First Apparition", "label": "First Apparition", "shape": "dot", "size": 9}, {"color": "#97c2fc", "id": "more", "label": "more", "shape": "dot", "size": 1}, {"color": "#97c2fc", "id": "Second Apparition", "label": "Second Apparition", "shape": "dot", "size": 8}, {"color": "#97c2fc", "id": "Third Apparition", "label": "Third Apparition", "shape": "dot", "size": 8}, {"color": "#97c2fc", "id": "Lady Macduff", "label": "Lady Macduff", "shape": "dot", "size": 5}, {"color": "#97c2fc", "id": "Stands Scotland", "label": "Stands Scotland", "shape": "dot", "size": 1}, {"color": "#97c2fc", "id": "Convert", "label": "Convert", "shape": "dot", "size": 1}, {"color": "#97c2fc", "id": "Gentlewoman", "label": "Gentlewoman", "shape": "dot", "size": 3}, {"color": "#97c2fc", "id": "Lo", "label": "Lo", "shape": "dot", "size": 1}, {"color": "#97c2fc", "id": "Menteith", "label": "Menteith", "shape": "dot", "size": 7}, {"color": "#97c2fc", "id": "Caithness", "label": "Caithness", "shape": "dot", "size": 4}, {"color": "#97c2fc", "id": "Servant", "label": "Servant", "shape": "dot", "size": 5}, {"color": "#97c2fc", "id": "Soldiers", "label": "Soldiers", "shape": "dot", "size": 5}, {"color": "#97c2fc", "id": "Seyton", "label": "Seyton", "shape": "dot", "size": 4}, {"color": "#97c2fc", "id": "Pluck", "label": "Pluck", "shape": "dot", "size": 1}, {"color": "#97c2fc", "id": "Doctor", "label": "Doctor", "shape": "dot", "size": 8}, {"color": "#97c2fc", "id": "Err", "label": "Err", "shape": "dot", "size": 1}, {"color": "#97c2fc", "id": "Blow", "label": "Blow", "shape": "dot", "size": 1}, {"color": "#97c2fc", "id": "Angus", "label": "Angus", "shape": "dot", "size": 9}, {"color": "#97c2fc", "id": "Messenger", "label": "Messenger", "shape": "dot", "size": 7}, {"color": "#97c2fc", "id": "Attendant", "label": "Attendant", "shape": "dot", "size": 6}, {"color": "#97c2fc", "id": "Second Murderer", "label": "Second Murderer", "shape": "dot", "size": 7}, {"color": "#97c2fc", "id": "Both Murderers", "label": "Both Murderers", "shape": "dot", "size": 6}, {"color": "#97c2fc", "id": "Lords", "label": "Lords", "shape": "dot", "size": 5}, {"color": "#97c2fc", "id": "Son", "label": "Son", "shape": "dot", "size": 4}, {"color": "#97c2fc", "id": "Young Siward", "label": "Young Siward", "shape": "dot", "size": 4}]);
+                  edges = new vis.DataSet([{"from": "Macbeth", "to": "Third Witch", "width": 5}, {"from": "Macbeth", "to": "Sergeant", "width": 1}, {"from": "Macbeth", "to": "Second Witch", "width": 2}, {"from": "Macbeth", "to": "Ross", "width": 4}, {"from": "Macbeth", "to": "kinsman", "width": 1}, {"from": "Macbeth", "to": "Thou", "width": 3}, {"from": "Macbeth", "to": "Tarquin", "width": 1}, {"from": "Macbeth", "to": "ho", "width": 1}, {"from": "Macbeth", "to": "gore", "width": 1}, {"from": "Macbeth", "to": "kno", "width": 1}, {"from": "Macbeth", "to": "Macduff", "width": 8}, {"from": "Macbeth", "to": "Sirrah", "width": 1}, {"from": "Macbeth", "to": "Mark Antonys", "width": 1}, {"from": "Macbeth", "to": "Third Murderer", "width": 1}, {"from": "Macbeth", "to": "lo", "width": 1}, {"from": "Macbeth", "to": "more", "width": 1}, {"from": "Macbeth", "to": "Second Apparition", "width": 4}, {"from": "Macbeth", "to": "Third Apparition", "width": 1}, {"from": "Macbeth", "to": "Malcolm", "width": 10}, {"from": "Macbeth", "to": "Seyton", "width": 4}, {"from": "Macbeth", "to": "Pluck", "width": 1}, {"from": "Macbeth", "to": "Messenger", "width": 2}, {"from": "Macbeth", "to": "Porter", "width": 1}, {"from": "Macbeth", "to": "Second Murderer", "width": 1}, {"from": "Macbeth", "to": "Servant", "width": 2}, {"from": "Macbeth", "to": "Young Siward", "width": 1}, {"from": "Macbeth", "to": "Siward", "width": 2}, {"from": "Third Witch", "to": "wolf", "width": 1}, {"from": "First Witch", "to": "Graymalkin", "width": 1}, {"from": "First Witch", "to": "Weary sennights", "width": 1}, {"from": "First Witch", "to": "Macbeth", "width": 4}, {"from": "First Witch", "to": "Hecate", "width": 2}, {"from": "First Witch", "to": "Second Witch", "width": 3}, {"from": "First Witch", "to": "Third Witch", "width": 3}, {"from": "First Witch", "to": "Ross", "width": 1}, {"from": "First Witch", "to": "Second Apparition", "width": 1}, {"from": "First Witch", "to": "Third Apparition", "width": 1}, {"from": "First Witch", "to": "Lennox", "width": 1}, {"from": "Macdonwald", "to": "Sergeant", "width": 1}, {"from": "Sergeant", "to": "Worthy", "width": 1}, {"from": "Duncan", "to": "worthy gentleman", "width": 1}, {"from": "Duncan", "to": "Macbeth", "width": 11}, {"from": "Duncan", "to": "Malcolm", "width": 2}, {"from": "Duncan", "to": "Lady Macbeth", "width": 5}, {"from": "Duncan", "to": "Herein", "width": 1}, {"from": "Duncan", "to": "Ross", "width": 3}, {"from": "Duncan", "to": "Lennox", "width": 3}, {"from": "Duncan", "to": "Lord", "width": 1}, {"from": "Duncan", "to": "Sergeant", "width": 1}, {"from": "Mark", "to": "Sergeant", "width": 1}, {"from": "Banquo", "to": "Duncan", "width": 4}, {"from": "Banquo", "to": "Forres", "width": 1}, {"from": "Banquo", "to": "Third Witch", "width": 1}, {"from": "Banquo", "to": "First Witch", "width": 1}, {"from": "Banquo", "to": "Cawdor", "width": 2}, {"from": "Banquo", "to": "Macbeth", "width": 19}, {"from": "Banquo", "to": "Macduff", "width": 4}, {"from": "Banquo", "to": "Glamis", "width": 1}, {"from": "Banquo", "to": "Lady Macbeth", "width": 5}, {"from": "Banquo", "to": "ho", "width": 1}, {"from": "Banquo", "to": "Fleance", "width": 2}, {"from": "Banquo", "to": "First Murderer", "width": 3}, {"from": "Banquo", "to": "Lennox", "width": 2}, {"from": "Banquo", "to": "Second Witch", "width": 1}, {"from": "Banquo", "to": "Ross", "width": 1}, {"from": "Banquo", "to": "Malcolm", "width": 2}, {"from": "Banquo", "to": "Porter", "width": 1}, {"from": "Banquo", "to": "Donalbain", "width": 1}, {"from": "Banquo", "to": "Second Murderer", "width": 2}, {"from": "Banquo", "to": "Both Murderers", "width": 1}, {"from": "Banquo", "to": "Third Murderer", "width": 1}, {"from": "Golgotha", "to": "Sergeant", "width": 1}, {"from": "Malcolm", "to": "Ross", "width": 3}, {"from": "Malcolm", "to": "Siward", "width": 6}, {"from": "Malcolm", "to": "Menteith", "width": 2}, {"from": "Malcolm", "to": "Sergeant", "width": 1}, {"from": "Malcolm", "to": "Porter", "width": 1}, {"from": "Malcolm", "to": "Soldiers", "width": 1}, {"from": "Malcolm", "to": "Young Siward", "width": 1}, {"from": "Ross", "to": "Sweno", "width": 1}, {"from": "Ross", "to": "Sergeant", "width": 1}, {"from": "Ross", "to": "Second Witch", "width": 1}, {"from": "Ross", "to": "Third Witch", "width": 1}, {"from": "Ross", "to": "Son", "width": 1}, {"from": "Ross", "to": "Siward", "width": 1}, {"from": "Cawdor", "to": "Ross", "width": 2}, {"from": "Cawdor", "to": "Duncan", "width": 3}, {"from": "Cawdor", "to": "Second Witch", "width": 1}, {"from": "Cawdor", "to": "Macbeth", "width": 9}, {"from": "Cawdor", "to": "Lady Macbeth", "width": 2}, {"from": "Bellona", "to": "Ross", "width": 1}, {"from": "Norways", "to": "Ross", "width": 1}, {"from": "Second Witch", "to": "Third Witch", "width": 3}, {"from": "Second Witch", "to": "Third Apparition", "width": 1}, {"from": "Glamis", "to": "Macbeth", "width": 2}, {"from": "Lady Macbeth", "to": "ho", "width": 1}, {"from": "Lady Macbeth", "to": "Messenger", "width": 1}, {"from": "Lady Macbeth", "to": "Macbeth", "width": 7}, {"from": "Lady Macbeth", "to": "Porter", "width": 1}, {"from": "Lady Macbeth", "to": "Macduff", "width": 1}, {"from": "Lady Macbeth", "to": "Lennox", "width": 2}, {"from": "Lady Macbeth", "to": "Malcolm", "width": 1}, {"from": "Lady Macbeth", "to": "Second Murderer", "width": 1}, {"from": "Lady Macbeth", "to": "Servant", "width": 1}, {"from": "Lady Macbeth", "to": "Lords", "width": 1}, {"from": "Lady Macbeth", "to": "Ross", "width": 1}, {"from": "Hecate", "to": "Macbeth", "width": 4}, {"from": "Hecate", "to": "Second Witch", "width": 1}, {"from": "Hecate", "to": "Third Witch", "width": 1}, {"from": "Hecate", "to": "Second Apparition", "width": 1}, {"from": "Hecate", "to": "Third Apparition", "width": 1}, {"from": "Hecate", "to": "Lennox", "width": 1}, {"from": "Donalbain", "to": "Lady Macbeth", "width": 2}, {"from": "Donalbain", "to": "Macduff", "width": 2}, {"from": "Donalbain", "to": "MALCOLM", "width": 1}, {"from": "Donalbain", "to": "Lennox", "width": 2}, {"from": "Donalbain", "to": "Porter", "width": 1}, {"from": "Donalbain", "to": "Macbeth", "width": 1}, {"from": "Donalbain", "to": "Malcolm", "width": 1}, {"from": "Faith", "to": "Porter", "width": 1}, {"from": "Marry", "to": "Porter", "width": 1}, {"from": "Lord", "to": "Macduff", "width": 2}, {"from": "Lord", "to": "Siward", "width": 1}, {"from": "Macduff", "to": "Malcolm", "width": 8}, {"from": "Macduff", "to": "Ross", "width": 3}, {"from": "Macduff", "to": "Stands Scotland", "width": 1}, {"from": "Macduff", "to": "Menteith", "width": 2}, {"from": "Macduff", "to": "Porter", "width": 1}, {"from": "Macduff", "to": "Old Man", "width": 1}, {"from": "Macduff", "to": "Siward", "width": 4}, {"from": "Macduff", "to": "Soldiers", "width": 1}, {"from": "Macduff", "to": "Young Siward", "width": 1}, {"from": "DONALBAIN", "to": "Malcolm", "width": 2}, {"from": "Old Man", "to": "Tis", "width": 1}, {"from": "Old Man", "to": "Ross", "width": 1}, {"from": "Fleance", "to": "Macbeth", "width": 5}, {"from": "Fleance", "to": "Lennox", "width": 3}, {"from": "First Murderer", "to": "lives", "width": 1}, {"from": "First Murderer", "to": "inn", "width": 1}, {"from": "First Murderer", "to": "Fleance", "width": 1}, {"from": "First Murderer", "to": "Macbeth", "width": 2}, {"from": "First Murderer", "to": "Lady Macbeth", "width": 2}, {"from": "First Murderer", "to": "Second Murderer", "width": 2}, {"from": "First Murderer", "to": "Third Murderer", "width": 1}, {"from": "First Murderer", "to": "Lords", "width": 1}, {"from": "First Murderer", "to": "Lennox", "width": 1}, {"from": "First Murderer", "to": "Ross", "width": 2}, {"from": "First Murderer", "to": "Lady Macduff", "width": 1}, {"from": "First Murderer", "to": "Son", "width": 1}, {"from": "First Murderer", "to": "Messenger", "width": 1}, {"from": "Lennox", "to": "Mayt", "width": 1}, {"from": "Lennox", "to": "Macbeth", "width": 5}, {"from": "Lennox", "to": "Malcolm", "width": 3}, {"from": "Lennox", "to": "Macduff", "width": 4}, {"from": "Lennox", "to": "Siward", "width": 1}, {"from": "Lennox", "to": "Sergeant", "width": 1}, {"from": "Lennox", "to": "Ross", "width": 2}, {"from": "Lennox", "to": "Porter", "width": 1}, {"from": "Lennox", "to": "Lords", "width": 1}, {"from": "Lennox", "to": "Lord", "width": 1}, {"from": "Lennox", "to": "Second Witch", "width": 1}, {"from": "Lennox", "to": "Third Witch", "width": 1}, {"from": "Lennox", "to": "Second Apparition", "width": 1}, {"from": "Lennox", "to": "Third Apparition", "width": 1}, {"from": "Lennox", "to": "Menteith", "width": 1}, {"from": "Edward", "to": "Lord", "width": 1}, {"from": "Siward", "to": "Soldiers", "width": 1}, {"from": "Siward", "to": "Young Siward", "width": 1}, {"from": "First Apparition", "to": "Macbeth", "width": 3}, {"from": "First Apparition", "to": "Macduff", "width": 1}, {"from": "First Apparition", "to": "First Witch", "width": 1}, {"from": "First Apparition", "to": "Second Witch", "width": 1}, {"from": "First Apparition", "to": "Third Witch", "width": 1}, {"from": "First Apparition", "to": "Hecate", "width": 1}, {"from": "First Apparition", "to": "Second Apparition", "width": 1}, {"from": "First Apparition", "to": "Third Apparition", "width": 1}, {"from": "First Apparition", "to": "Lennox", "width": 1}, {"from": "Second Apparition", "to": "Second Witch", "width": 1}, {"from": "Second Apparition", "to": "Third Witch", "width": 1}, {"from": "Second Apparition", "to": "Third Apparition", "width": 1}, {"from": "Third Apparition", "to": "Third Witch", "width": 1}, {"from": "Lady Macduff", "to": "Sirrah", "width": 1}, {"from": "Lady Macduff", "to": "Ross", "width": 1}, {"from": "Lady Macduff", "to": "Son", "width": 1}, {"from": "Lady Macduff", "to": "Messenger", "width": 1}, {"from": "Convert", "to": "Malcolm", "width": 1}, {"from": "Gentlewoman", "to": "Lo", "width": 1}, {"from": "Gentlewoman", "to": "Lady Macbeth", "width": 1}, {"from": "Menteith", "to": "Siward", "width": 2}, {"from": "Menteith", "to": "Soldiers", "width": 1}, {"from": "Caithness", "to": "Donalbain", "width": 1}, {"from": "Caithness", "to": "Menteith", "width": 1}, {"from": "Caithness", "to": "Lennox", "width": 1}, {"from": "Servant", "to": "Soldiers", "width": 1}, {"from": "Servant", "to": "Seyton", "width": 1}, {"from": "Doctor", "to": "Macbeth", "width": 1}, {"from": "Doctor", "to": "Malcolm", "width": 1}, {"from": "Doctor", "to": "Macduff", "width": 1}, {"from": "Doctor", "to": "Ross", "width": 1}, {"from": "Doctor", "to": "Gentlewoman", "width": 1}, {"from": "Doctor", "to": "Lady Macbeth", "width": 1}, {"from": "Doctor", "to": "Servant", "width": 1}, {"from": "Doctor", "to": "Seyton", "width": 1}, {"from": "Err", "to": "Malcolm", "width": 1}, {"from": "Blow", "to": "Macbeth", "width": 1}, {"from": "Angus", "to": "First Witch", "width": 1}, {"from": "Angus", "to": "Second Witch", "width": 1}, {"from": "Angus", "to": "Third Witch", "width": 1}, {"from": "Angus", "to": "Macbeth", "width": 1}, {"from": "Angus", "to": "Banquo", "width": 1}, {"from": "Angus", "to": "Ross", "width": 1}, {"from": "Angus", "to": "Menteith", "width": 1}, {"from": "Angus", "to": "Caithness", "width": 1}, {"from": "Angus", "to": "Lennox", "width": 1}, {"from": "Messenger", "to": "Ross", "width": 1}, {"from": "Messenger", "to": "Son", "width": 1}, {"from": "Messenger", "to": "Seyton", "width": 1}, {"from": "Attendant", "to": "Banquo", "width": 1}, {"from": "Attendant", "to": "Macbeth", "width": 1}, {"from": "Attendant", "to": "Lady Macbeth", "width": 1}, {"from": "Attendant", "to": "First Murderer", "width": 1}, {"from": "Attendant", "to": "Second Murderer", "width": 1}, {"from": "Attendant", "to": "Both Murderers", "width": 1}, {"from": "Second Murderer", "to": "Third Murderer", "width": 1}, {"from": "Both Murderers", "to": "Macbeth", "width": 1}, {"from": "Both Murderers", "to": "Lady Macbeth", "width": 1}, {"from": "Both Murderers", "to": "First Murderer", "width": 1}, {"from": "Both Murderers", "to": "Second Murderer", "width": 1}, {"from": "Lords", "to": "Macbeth", "width": 1}, {"from": "Lords", "to": "Ross", "width": 1}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+                    network.on("click", neighbourhoodHighlight);
+                  
+
+                  
+                    network.on("selectNode", neighbourhoodHighlight);
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>
