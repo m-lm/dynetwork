@@ -3,9 +3,7 @@ from spacytextblob.spacytextblob import SpacyTextBlob
 import pandas as pd
 import numpy as np
 import networkx as nx
-from dask.distributed import LocalCluster
 from collections import Counter
-import os
 
 df = pd.read_csv("data/plays/Macbeth.csv")
 
