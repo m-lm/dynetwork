@@ -1,0 +1,634 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd"><key id="d1" for="edge" attr.name="width" attr.type="long"/>
+<key id="d0" for="node" attr.name="size" attr.type="long"/>
+<graph edgedefault="directed"><node id="King Richard Ii">
+  <data key="d0">10</data>
+</node>
+<node id="Thomas Mowbray">
+  <data key="d0">10</data>
+</node>
+<node id="Henry Bolingbroke">
+  <data key="d0">10</data>
+</node>
+<node id="Lord">
+  <data key="d0">10</data>
+</node>
+<node id="Lord Marshal">
+  <data key="d0">10</data>
+</node>
+<node id="First Herald">
+  <data key="d0">10</data>
+</node>
+<node id="Second Herald">
+  <data key="d0">10</data>
+</node>
+<node id="Bushy">
+  <data key="d0">10</data>
+</node>
+<node id="Bagot">
+  <data key="d0">10</data>
+</node>
+<node id="Green">
+  <data key="d0">10</data>
+</node>
+<node id="Lord Ross">
+  <data key="d0">10</data>
+</node>
+<node id="Northumberland">
+  <data key="d0">10</data>
+</node>
+<node id="Henry Percy">
+  <data key="d0">10</data>
+</node>
+<node id="Queen">
+  <data key="d0">10</data>
+</node>
+<node id="Lord Berkeley">
+  <data key="d0">10</data>
+</node>
+<node id="Duke Of Aumerle">
+  <data key="d0">10</data>
+</node>
+<node id="Duke Of York">
+  <data key="d0">10</data>
+</node>
+<node id="Sir Stephen Scroop">
+  <data key="d0">10</data>
+</node>
+<node id="Gardener">
+  <data key="d0">10</data>
+</node>
+<node id="Duke Of Surrey">
+  <data key="d0">10</data>
+</node>
+<node id="Lord Fitzwater">
+  <data key="d0">10</data>
+</node>
+<node id="Bishop Of Carlisle">
+  <data key="d0">10</data>
+</node>
+<node id="Exton">
+  <data key="d0">10</data>
+</node>
+<node id="Keeper">
+  <data key="d0">10</data>
+</node>
+<node id="Abbot">
+  <data key="d0">10</data>
+</node>
+<node id="John Of Gaunt">
+  <data key="d0">10</data>
+</node>
+<node id="Duchess">
+  <data key="d0">10</data>
+</node>
+<node id="Lord Willoughby">
+  <data key="d0">10</data>
+</node>
+<node id="Servant">
+  <data key="d0">10</data>
+</node>
+<node id="Captain">
+  <data key="d0">10</data>
+</node>
+<node id="Earl Of Salisbury">
+  <data key="d0">10</data>
+</node>
+<node id="Lady">
+  <data key="d0">10</data>
+</node>
+<node id="Duchess Of York">
+  <data key="d0">10</data>
+</node>
+<node id="Groom">
+  <data key="d0">10</data>
+</node>
+<edge source="King Richard Ii" target="Thomas Mowbray">
+  <data key="d1">3</data>
+</edge>
+<edge source="King Richard Ii" target="Lord">
+  <data key="d1">4</data>
+</edge>
+<edge source="King Richard Ii" target="Northumberland">
+  <data key="d1">7</data>
+</edge>
+<edge source="King Richard Ii" target="Lord Marshal">
+  <data key="d1">1</data>
+</edge>
+<edge source="King Richard Ii" target="Second Herald">
+  <data key="d1">1</data>
+</edge>
+<edge source="King Richard Ii" target="Queen">
+  <data key="d1">2</data>
+</edge>
+<edge source="King Richard Ii" target="Lord Ross">
+  <data key="d1">1</data>
+</edge>
+<edge source="King Richard Ii" target="Lord Willoughby">
+  <data key="d1">1</data>
+</edge>
+<edge source="King Richard Ii" target="Sir Stephen Scroop">
+  <data key="d1">1</data>
+</edge>
+<edge source="King Richard Ii" target="Lord Fitzwater">
+  <data key="d1">1</data>
+</edge>
+<edge source="Henry Bolingbroke" target="Thomas Mowbray">
+  <data key="d1">2</data>
+</edge>
+<edge source="Henry Bolingbroke" target="Lord">
+  <data key="d1">4</data>
+</edge>
+<edge source="Henry Bolingbroke" target="Northumberland">
+  <data key="d1">5</data>
+</edge>
+<edge source="Henry Bolingbroke" target="King Richard Ii">
+  <data key="d1">4</data>
+</edge>
+<edge source="Henry Bolingbroke" target="John Of Gaunt">
+  <data key="d1">2</data>
+</edge>
+<edge source="Henry Bolingbroke" target="Lord Marshal">
+  <data key="d1">1</data>
+</edge>
+<edge source="Henry Bolingbroke" target="Second Herald">
+  <data key="d1">1</data>
+</edge>
+<edge source="Henry Bolingbroke" target="Henry Percy">
+  <data key="d1">5</data>
+</edge>
+<edge source="Henry Bolingbroke" target="Lord Ross">
+  <data key="d1">1</data>
+</edge>
+<edge source="Henry Bolingbroke" target="Lord Willoughby">
+  <data key="d1">1</data>
+</edge>
+<edge source="Henry Bolingbroke" target="Lord Berkeley">
+  <data key="d1">1</data>
+</edge>
+<edge source="Henry Bolingbroke" target="Lord Fitzwater">
+  <data key="d1">2</data>
+</edge>
+<edge source="Lord" target="Thomas Mowbray">
+  <data key="d1">1</data>
+</edge>
+<edge source="Lord" target="Lord Marshal">
+  <data key="d1">1</data>
+</edge>
+<edge source="Lord" target="Northumberland">
+  <data key="d1">3</data>
+</edge>
+<edge source="Lord" target="Lord Berkeley">
+  <data key="d1">1</data>
+</edge>
+<edge source="Lord" target="Lord Fitzwater">
+  <data key="d1">1</data>
+</edge>
+<edge source="Lord Marshal" target="Thomas Mowbray">
+  <data key="d1">1</data>
+</edge>
+<edge source="Lord Marshal" target="Second Herald">
+  <data key="d1">1</data>
+</edge>
+<edge source="First Herald" target="Thomas Mowbray">
+  <data key="d1">1</data>
+</edge>
+<edge source="First Herald" target="Lord Marshal">
+  <data key="d1">1</data>
+</edge>
+<edge source="First Herald" target="King Richard Ii">
+  <data key="d1">1</data>
+</edge>
+<edge source="First Herald" target="Henry Bolingbroke">
+  <data key="d1">1</data>
+</edge>
+<edge source="First Herald" target="John Of Gaunt">
+  <data key="d1">1</data>
+</edge>
+<edge source="First Herald" target="Second Herald">
+  <data key="d1">1</data>
+</edge>
+<edge source="Second Herald" target="Thomas Mowbray">
+  <data key="d1">1</data>
+</edge>
+<edge source="Bushy" target="King Richard Ii">
+  <data key="d1">4</data>
+</edge>
+<edge source="Bushy" target="Northumberland">
+  <data key="d1">1</data>
+</edge>
+<edge source="Bushy" target="Henry Bolingbroke">
+  <data key="d1">2</data>
+</edge>
+<edge source="Bushy" target="Duke Of Aumerle">
+  <data key="d1">2</data>
+</edge>
+<edge source="Bushy" target="Gardener">
+  <data key="d1">1</data>
+</edge>
+<edge source="Bushy" target="Green">
+  <data key="d1">3</data>
+</edge>
+<edge source="Bushy" target="Queen">
+  <data key="d1">1</data>
+</edge>
+<edge source="Bushy" target="Duke Of York">
+  <data key="d1">2</data>
+</edge>
+<edge source="Bushy" target="Servant">
+  <data key="d1">1</data>
+</edge>
+<edge source="Bagot" target="King Richard Ii">
+  <data key="d1">3</data>
+</edge>
+<edge source="Bagot" target="Henry Bolingbroke">
+  <data key="d1">4</data>
+</edge>
+<edge source="Bagot" target="Lord">
+  <data key="d1">2</data>
+</edge>
+<edge source="Bagot" target="Bushy">
+  <data key="d1">1</data>
+</edge>
+<edge source="Bagot" target="Queen">
+  <data key="d1">1</data>
+</edge>
+<edge source="Bagot" target="Green">
+  <data key="d1">1</data>
+</edge>
+<edge source="Bagot" target="Duke Of York">
+  <data key="d1">2</data>
+</edge>
+<edge source="Bagot" target="Servant">
+  <data key="d1">1</data>
+</edge>
+<edge source="Bagot" target="Duke Of Aumerle">
+  <data key="d1">1</data>
+</edge>
+<edge source="Bagot" target="Lord Fitzwater">
+  <data key="d1">1</data>
+</edge>
+<edge source="Bagot" target="Henry Percy">
+  <data key="d1">1</data>
+</edge>
+<edge source="Bagot" target="Duke Of Surrey">
+  <data key="d1">1</data>
+</edge>
+<edge source="Bagot" target="Bishop Of Carlisle">
+  <data key="d1">1</data>
+</edge>
+<edge source="Bagot" target="Northumberland">
+  <data key="d1">1</data>
+</edge>
+<edge source="Green" target="King Richard Ii">
+  <data key="d1">2</data>
+</edge>
+<edge source="Green" target="Lord">
+  <data key="d1">1</data>
+</edge>
+<edge source="Green" target="Northumberland">
+  <data key="d1">1</data>
+</edge>
+<edge source="Green" target="Henry Percy">
+  <data key="d1">1</data>
+</edge>
+<edge source="Green" target="Queen">
+  <data key="d1">1</data>
+</edge>
+<edge source="Green" target="Henry Bolingbroke">
+  <data key="d1">1</data>
+</edge>
+<edge source="Green" target="Servant">
+  <data key="d1">1</data>
+</edge>
+<edge source="Lord Ross" target="Northumberland">
+  <data key="d1">2</data>
+</edge>
+<edge source="Lord Ross" target="Queen">
+  <data key="d1">1</data>
+</edge>
+<edge source="Lord Ross" target="Lord Willoughby">
+  <data key="d1">2</data>
+</edge>
+<edge source="Northumberland" target="Queen">
+  <data key="d1">2</data>
+</edge>
+<edge source="Henry Percy" target="Lord">
+  <data key="d1">4</data>
+</edge>
+<edge source="Henry Percy" target="Sir Stephen Scroop">
+  <data key="d1">1</data>
+</edge>
+<edge source="Henry Percy" target="Northumberland">
+  <data key="d1">4</data>
+</edge>
+<edge source="Henry Percy" target="Lord Ross">
+  <data key="d1">1</data>
+</edge>
+<edge source="Henry Percy" target="Lord Willoughby">
+  <data key="d1">1</data>
+</edge>
+<edge source="Henry Percy" target="Lord Berkeley">
+  <data key="d1">1</data>
+</edge>
+<edge source="Henry Percy" target="King Richard Ii">
+  <data key="d1">2</data>
+</edge>
+<edge source="Henry Percy" target="Lord Fitzwater">
+  <data key="d1">2</data>
+</edge>
+<edge source="Queen" target="Servant">
+  <data key="d1">2</data>
+</edge>
+<edge source="Lord Berkeley" target="Northumberland">
+  <data key="d1">1</data>
+</edge>
+<edge source="Lord Berkeley" target="Lord Ross">
+  <data key="d1">1</data>
+</edge>
+<edge source="Lord Berkeley" target="Lord Willoughby">
+  <data key="d1">1</data>
+</edge>
+<edge source="Duke Of Aumerle" target="Green">
+  <data key="d1">2</data>
+</edge>
+<edge source="Duke Of Aumerle" target="Northumberland">
+  <data key="d1">2</data>
+</edge>
+<edge source="Duke Of Aumerle" target="Lord Marshal">
+  <data key="d1">1</data>
+</edge>
+<edge source="Duke Of Aumerle" target="King Richard Ii">
+  <data key="d1">5</data>
+</edge>
+<edge source="Duke Of Aumerle" target="Thomas Mowbray">
+  <data key="d1">1</data>
+</edge>
+<edge source="Duke Of Aumerle" target="Henry Bolingbroke">
+  <data key="d1">4</data>
+</edge>
+<edge source="Duke Of Aumerle" target="John Of Gaunt">
+  <data key="d1">1</data>
+</edge>
+<edge source="Duke Of Aumerle" target="First Herald">
+  <data key="d1">1</data>
+</edge>
+<edge source="Duke Of Aumerle" target="Second Herald">
+  <data key="d1">1</data>
+</edge>
+<edge source="Duke Of Aumerle" target="Earl Of Salisbury">
+  <data key="d1">1</data>
+</edge>
+<edge source="Duke Of Aumerle" target="Sir Stephen Scroop">
+  <data key="d1">1</data>
+</edge>
+<edge source="Duke Of Aumerle" target="Duke Of York">
+  <data key="d1">4</data>
+</edge>
+<edge source="Duke Of Aumerle" target="Henry Percy">
+  <data key="d1">3</data>
+</edge>
+<edge source="Duke Of Aumerle" target="Lord Fitzwater">
+  <data key="d1">1</data>
+</edge>
+<edge source="Duke Of Aumerle" target="Lord">
+  <data key="d1">1</data>
+</edge>
+<edge source="Duke Of Aumerle" target="Duke Of Surrey">
+  <data key="d1">1</data>
+</edge>
+<edge source="Duke Of York" target="Lord">
+  <data key="d1">2</data>
+</edge>
+<edge source="Duke Of York" target="Northumberland">
+  <data key="d1">4</data>
+</edge>
+<edge source="Duke Of York" target="Henry Bolingbroke">
+  <data key="d1">5</data>
+</edge>
+<edge source="Duke Of York" target="John Of Gaunt">
+  <data key="d1">1</data>
+</edge>
+<edge source="Duke Of York" target="Queen">
+  <data key="d1">2</data>
+</edge>
+<edge source="Duke Of York" target="King Richard Ii">
+  <data key="d1">3</data>
+</edge>
+<edge source="Duke Of York" target="Lord Ross">
+  <data key="d1">2</data>
+</edge>
+<edge source="Duke Of York" target="Lord Willoughby">
+  <data key="d1">2</data>
+</edge>
+<edge source="Duke Of York" target="Green">
+  <data key="d1">2</data>
+</edge>
+<edge source="Duke Of York" target="Servant">
+  <data key="d1">1</data>
+</edge>
+<edge source="Duke Of York" target="Henry Percy">
+  <data key="d1">4</data>
+</edge>
+<edge source="Duke Of York" target="Lord Berkeley">
+  <data key="d1">1</data>
+</edge>
+<edge source="Duke Of York" target="Lord Fitzwater">
+  <data key="d1">1</data>
+</edge>
+<edge source="Gardener" target="Green">
+  <data key="d1">1</data>
+</edge>
+<edge source="Gardener" target="Queen">
+  <data key="d1">1</data>
+</edge>
+<edge source="Gardener" target="Lady">
+  <data key="d1">1</data>
+</edge>
+<edge source="Gardener" target="Servant">
+  <data key="d1">1</data>
+</edge>
+<edge source="Duke Of Surrey" target="Lord Fitzwater">
+  <data key="d1">1</data>
+</edge>
+<edge source="Duke Of Surrey" target="Henry Bolingbroke">
+  <data key="d1">1</data>
+</edge>
+<edge source="Duke Of Surrey" target="Henry Percy">
+  <data key="d1">1</data>
+</edge>
+<edge source="Duke Of Surrey" target="Lord">
+  <data key="d1">1</data>
+</edge>
+<edge source="Duke Of Surrey" target="Duke Of York">
+  <data key="d1">1</data>
+</edge>
+<edge source="Duke Of Surrey" target="Northumberland">
+  <data key="d1">1</data>
+</edge>
+<edge source="Duke Of Surrey" target="King Richard Ii">
+  <data key="d1">1</data>
+</edge>
+<edge source="Lord Fitzwater" target="Northumberland">
+  <data key="d1">2</data>
+</edge>
+<edge source="Bishop Of Carlisle" target="Lord">
+  <data key="d1">1</data>
+</edge>
+<edge source="Bishop Of Carlisle" target="King Richard Ii">
+  <data key="d1">2</data>
+</edge>
+<edge source="Bishop Of Carlisle" target="Duke Of Aumerle">
+  <data key="d1">2</data>
+</edge>
+<edge source="Bishop Of Carlisle" target="Earl Of Salisbury">
+  <data key="d1">1</data>
+</edge>
+<edge source="Bishop Of Carlisle" target="Sir Stephen Scroop">
+  <data key="d1">1</data>
+</edge>
+<edge source="Bishop Of Carlisle" target="Henry Bolingbroke">
+  <data key="d1">1</data>
+</edge>
+<edge source="Bishop Of Carlisle" target="Lord Fitzwater">
+  <data key="d1">1</data>
+</edge>
+<edge source="Bishop Of Carlisle" target="Henry Percy">
+  <data key="d1">1</data>
+</edge>
+<edge source="Bishop Of Carlisle" target="Duke Of Surrey">
+  <data key="d1">1</data>
+</edge>
+<edge source="Bishop Of Carlisle" target="Duke Of York">
+  <data key="d1">1</data>
+</edge>
+<edge source="Bishop Of Carlisle" target="Northumberland">
+  <data key="d1">1</data>
+</edge>
+<edge source="Exton" target="Keeper">
+  <data key="d1">1</data>
+</edge>
+<edge source="Exton" target="King Richard Ii">
+  <data key="d1">1</data>
+</edge>
+<edge source="Exton" target="Henry Bolingbroke">
+  <data key="d1">1</data>
+</edge>
+<edge source="Exton" target="Servant">
+  <data key="d1">1</data>
+</edge>
+<edge source="Exton" target="Groom">
+  <data key="d1">1</data>
+</edge>
+<edge source="Exton" target="Northumberland">
+  <data key="d1">1</data>
+</edge>
+<edge source="Exton" target="Lord Fitzwater">
+  <data key="d1">1</data>
+</edge>
+<edge source="Exton" target="Henry Percy">
+  <data key="d1">1</data>
+</edge>
+<edge source="Keeper" target="King Richard Ii">
+  <data key="d1">1</data>
+</edge>
+<edge source="Abbot" target="Henry Percy">
+  <data key="d1">2</data>
+</edge>
+<edge source="Abbot" target="Henry Bolingbroke">
+  <data key="d1">1</data>
+</edge>
+<edge source="Abbot" target="Bagot">
+  <data key="d1">1</data>
+</edge>
+<edge source="Abbot" target="Duke Of Aumerle">
+  <data key="d1">1</data>
+</edge>
+<edge source="Abbot" target="Lord Fitzwater">
+  <data key="d1">1</data>
+</edge>
+<edge source="Abbot" target="Lord">
+  <data key="d1">1</data>
+</edge>
+<edge source="Abbot" target="Duke Of Surrey">
+  <data key="d1">1</data>
+</edge>
+<edge source="Abbot" target="Bishop Of Carlisle">
+  <data key="d1">1</data>
+</edge>
+<edge source="Abbot" target="Duke Of York">
+  <data key="d1">1</data>
+</edge>
+<edge source="Abbot" target="Northumberland">
+  <data key="d1">1</data>
+</edge>
+<edge source="Abbot" target="King Richard Ii">
+  <data key="d1">1</data>
+</edge>
+<edge source="John Of Gaunt" target="King Richard Ii">
+  <data key="d1">3</data>
+</edge>
+<edge source="John Of Gaunt" target="Thomas Mowbray">
+  <data key="d1">2</data>
+</edge>
+<edge source="John Of Gaunt" target="Lord Marshal">
+  <data key="d1">1</data>
+</edge>
+<edge source="John Of Gaunt" target="Second Herald">
+  <data key="d1">1</data>
+</edge>
+<edge source="John Of Gaunt" target="Queen">
+  <data key="d1">1</data>
+</edge>
+<edge source="John Of Gaunt" target="Northumberland">
+  <data key="d1">1</data>
+</edge>
+<edge source="John Of Gaunt" target="Lord Ross">
+  <data key="d1">1</data>
+</edge>
+<edge source="John Of Gaunt" target="Lord Willoughby">
+  <data key="d1">1</data>
+</edge>
+<edge source="Duchess" target="John Of Gaunt">
+  <data key="d1">1</data>
+</edge>
+<edge source="Lord Willoughby" target="Queen">
+  <data key="d1">1</data>
+</edge>
+<edge source="Lord Willoughby" target="Northumberland">
+  <data key="d1">2</data>
+</edge>
+<edge source="Captain" target="Earl Of Salisbury">
+  <data key="d1">1</data>
+</edge>
+<edge source="Earl Of Salisbury" target="King Richard Ii">
+  <data key="d1">1</data>
+</edge>
+<edge source="Earl Of Salisbury" target="Sir Stephen Scroop">
+  <data key="d1">1</data>
+</edge>
+<edge source="Lady" target="Queen">
+  <data key="d1">1</data>
+</edge>
+<edge source="Lady" target="Servant">
+  <data key="d1">1</data>
+</edge>
+<edge source="Duchess Of York" target="Duke Of York">
+  <data key="d1">2</data>
+</edge>
+<edge source="Duchess Of York" target="Duke Of Aumerle">
+  <data key="d1">2</data>
+</edge>
+<edge source="Duchess Of York" target="Henry Bolingbroke">
+  <data key="d1">1</data>
+</edge>
+<edge source="Duchess Of York" target="Henry Percy">
+  <data key="d1">1</data>
+</edge>
+<edge source="Groom" target="King Richard Ii">
+  <data key="d1">1</data>
+</edge>
+<edge source="Groom" target="Keeper">
+  <data key="d1">1</data>
+</edge>
+</graph></graphml>

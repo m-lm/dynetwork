@@ -1,0 +1,1084 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd"><key id="d1" for="edge" attr.name="width" attr.type="long"/>
+<key id="d0" for="node" attr.name="size" attr.type="long"/>
+<graph edgedefault="directed"><node id="Cleopatra">
+  <data key="d0">10</data>
+</node>
+<node id="Mark Antony">
+  <data key="d0">10</data>
+</node>
+<node id="Alexas">
+  <data key="d0">10</data>
+</node>
+<node id="Charmian">
+  <data key="d0">10</data>
+</node>
+<node id="Soothsayer">
+  <data key="d0">10</data>
+</node>
+<node id="Domitius Enobarbus">
+  <data key="d0">10</data>
+</node>
+<node id="Iras">
+  <data key="d0">10</data>
+</node>
+<node id="Egyptian">
+  <data key="d0">10</data>
+</node>
+<node id="Pompey">
+  <data key="d0">10</data>
+</node>
+<node id="Lepidus">
+  <data key="d0">10</data>
+</node>
+<node id="Octavius Caesar">
+  <data key="d0">10</data>
+</node>
+<node id="Messenger">
+  <data key="d0">10</data>
+</node>
+<node id="Menecrates">
+  <data key="d0">10</data>
+</node>
+<node id="Menas">
+  <data key="d0">10</data>
+</node>
+<node id="Mardian">
+  <data key="d0">10</data>
+</node>
+<node id="Varrius">
+  <data key="d0">10</data>
+</node>
+<node id="Ventidius">
+  <data key="d0">10</data>
+</node>
+<node id="Mecaenas">
+  <data key="d0">10</data>
+</node>
+<node id="Agrippa">
+  <data key="d0">10</data>
+</node>
+<node id="Octavia">
+  <data key="d0">10</data>
+</node>
+<node id="Second Servant">
+  <data key="d0">10</data>
+</node>
+<node id="Silius">
+  <data key="d0">10</data>
+</node>
+<node id="Eros">
+  <data key="d0">10</data>
+</node>
+<node id="Canidius">
+  <data key="d0">10</data>
+</node>
+<node id="Soldier">
+  <data key="d0">10</data>
+</node>
+<node id="Taurus">
+  <data key="d0">10</data>
+</node>
+<node id="Euphronius">
+  <data key="d0">10</data>
+</node>
+<node id="Thyreus">
+  <data key="d0">10</data>
+</node>
+<node id="Scarus">
+  <data key="d0">10</data>
+</node>
+<node id="Diomedes">
+  <data key="d0">10</data>
+</node>
+<node id="Proculeius">
+  <data key="d0">10</data>
+</node>
+<node id="Dolabella">
+  <data key="d0">10</data>
+</node>
+<node id="Dercetas">
+  <data key="d0">10</data>
+</node>
+<node id="Gallus">
+  <data key="d0">10</data>
+</node>
+<node id="Guard">
+  <data key="d0">10</data>
+</node>
+<node id="Seleucus">
+  <data key="d0">10</data>
+</node>
+<node id="Second Guard">
+  <data key="d0">10</data>
+</node>
+<node id="First Guard">
+  <data key="d0">10</data>
+</node>
+<node id="Philo">
+  <data key="d0">10</data>
+</node>
+<node id="Attendant">
+  <data key="d0">10</data>
+</node>
+<node id="Demetrius">
+  <data key="d0">10</data>
+</node>
+<node id="First Attendant">
+  <data key="d0">10</data>
+</node>
+<node id="Second Attendant">
+  <data key="d0">10</data>
+</node>
+<node id="Second Messenger">
+  <data key="d0">10</data>
+</node>
+<node id="Attendants">
+  <data key="d0">10</data>
+</node>
+<node id="First Servant">
+  <data key="d0">10</data>
+</node>
+<node id="First Soldier">
+  <data key="d0">10</data>
+</node>
+<node id="Second Soldier">
+  <data key="d0">10</data>
+</node>
+<node id="Third Soldier">
+  <data key="d0">10</data>
+</node>
+<node id="Fourth Soldier">
+  <data key="d0">10</data>
+</node>
+<node id="Captain">
+  <data key="d0">10</data>
+</node>
+<node id="Third Guard">
+  <data key="d0">10</data>
+</node>
+<node id="Clown">
+  <data key="d0">10</data>
+</node>
+<edge source="Cleopatra" target="Mark Antony">
+  <data key="d1">17</data>
+</edge>
+<edge source="Cleopatra" target="Domitius Enobarbus">
+  <data key="d1">7</data>
+</edge>
+<edge source="Cleopatra" target="Octavius Caesar">
+  <data key="d1">9</data>
+</edge>
+<edge source="Cleopatra" target="Mardian">
+  <data key="d1">4</data>
+</edge>
+<edge source="Cleopatra" target="Pompey">
+  <data key="d1">2</data>
+</edge>
+<edge source="Cleopatra" target="Iras">
+  <data key="d1">9</data>
+</edge>
+<edge source="Cleopatra" target="Octavia">
+  <data key="d1">5</data>
+</edge>
+<edge source="Cleopatra" target="Menas">
+  <data key="d1">1</data>
+</edge>
+<edge source="Cleopatra" target="Euphronius">
+  <data key="d1">2</data>
+</edge>
+<edge source="Cleopatra" target="Scarus">
+  <data key="d1">1</data>
+</edge>
+<edge source="Cleopatra" target="Diomedes">
+  <data key="d1">2</data>
+</edge>
+<edge source="Cleopatra" target="Proculeius">
+  <data key="d1">1</data>
+</edge>
+<edge source="Cleopatra" target="Dolabella">
+  <data key="d1">3</data>
+</edge>
+<edge source="Cleopatra" target="Seleucus">
+  <data key="d1">3</data>
+</edge>
+<edge source="Cleopatra" target="Egyptian">
+  <data key="d1">1</data>
+</edge>
+<edge source="Cleopatra" target="Philo">
+  <data key="d1">1</data>
+</edge>
+<edge source="Cleopatra" target="Demetrius">
+  <data key="d1">1</data>
+</edge>
+<edge source="Cleopatra" target="Soothsayer">
+  <data key="d1">1</data>
+</edge>
+<edge source="Cleopatra" target="Messenger">
+  <data key="d1">4</data>
+</edge>
+<edge source="Cleopatra" target="First Attendant">
+  <data key="d1">2</data>
+</edge>
+<edge source="Cleopatra" target="Second Attendant">
+  <data key="d1">1</data>
+</edge>
+<edge source="Cleopatra" target="Second Messenger">
+  <data key="d1">1</data>
+</edge>
+<edge source="Cleopatra" target="Soldier">
+  <data key="d1">2</data>
+</edge>
+<edge source="Cleopatra" target="Eros">
+  <data key="d1">2</data>
+</edge>
+<edge source="Cleopatra" target="Thyreus">
+  <data key="d1">1</data>
+</edge>
+<edge source="Cleopatra" target="Gallus">
+  <data key="d1">1</data>
+</edge>
+<edge source="Cleopatra" target="Guard">
+  <data key="d1">1</data>
+</edge>
+<edge source="Cleopatra" target="Clown">
+  <data key="d1">1</data>
+</edge>
+<edge source="Cleopatra" target="First Guard">
+  <data key="d1">1</data>
+</edge>
+<edge source="Cleopatra" target="Second Guard">
+  <data key="d1">1</data>
+</edge>
+<edge source="Mark Antony" target="Pompey">
+  <data key="d1">12</data>
+</edge>
+<edge source="Mark Antony" target="Varrius">
+  <data key="d1">1</data>
+</edge>
+<edge source="Mark Antony" target="Ventidius">
+  <data key="d1">3</data>
+</edge>
+<edge source="Mark Antony" target="Octavia">
+  <data key="d1">6</data>
+</edge>
+<edge source="Mark Antony" target="Menas">
+  <data key="d1">2</data>
+</edge>
+<edge source="Mark Antony" target="Messenger">
+  <data key="d1">3</data>
+</edge>
+<edge source="Mark Antony" target="Thyreus">
+  <data key="d1">1</data>
+</edge>
+<edge source="Mark Antony" target="Octavius Caesar">
+  <data key="d1">6</data>
+</edge>
+<edge source="Mark Antony" target="Proculeius">
+  <data key="d1">1</data>
+</edge>
+<edge source="Mark Antony" target="Philo">
+  <data key="d1">1</data>
+</edge>
+<edge source="Mark Antony" target="Soothsayer">
+  <data key="d1">2</data>
+</edge>
+<edge source="Mark Antony" target="Second Attendant">
+  <data key="d1">1</data>
+</edge>
+<edge source="Mark Antony" target="Second Messenger">
+  <data key="d1">1</data>
+</edge>
+<edge source="Mark Antony" target="Mecaenas">
+  <data key="d1">1</data>
+</edge>
+<edge source="Mark Antony" target="Second Servant">
+  <data key="d1">1</data>
+</edge>
+<edge source="Mark Antony" target="Soldier">
+  <data key="d1">3</data>
+</edge>
+<edge source="Mark Antony" target="Scarus">
+  <data key="d1">3</data>
+</edge>
+<edge source="Mark Antony" target="Second Guard">
+  <data key="d1">1</data>
+</edge>
+<edge source="Mark Antony" target="Third Guard">
+  <data key="d1">1</data>
+</edge>
+<edge source="Alexas" target="Charmian">
+  <data key="d1">6</data>
+</edge>
+<edge source="Alexas" target="Soothsayer">
+  <data key="d1">1</data>
+</edge>
+<edge source="Alexas" target="Cleopatra">
+  <data key="d1">5</data>
+</edge>
+<edge source="Alexas" target="Domitius Enobarbus">
+  <data key="d1">2</data>
+</edge>
+<edge source="Alexas" target="Iras">
+  <data key="d1">1</data>
+</edge>
+<edge source="Alexas" target="Messenger">
+  <data key="d1">2</data>
+</edge>
+<edge source="Alexas" target="Mark Antony">
+  <data key="d1">1</data>
+</edge>
+<edge source="Alexas" target="First Attendant">
+  <data key="d1">1</data>
+</edge>
+<edge source="Alexas" target="Second Attendant">
+  <data key="d1">1</data>
+</edge>
+<edge source="Alexas" target="Second Messenger">
+  <data key="d1">1</data>
+</edge>
+<edge source="Alexas" target="Mardian">
+  <data key="d1">1</data>
+</edge>
+<edge source="Charmian" target="Iras">
+  <data key="d1">4</data>
+</edge>
+<edge source="Charmian" target="Cleopatra">
+  <data key="d1">28</data>
+</edge>
+<edge source="Charmian" target="Mardian">
+  <data key="d1">2</data>
+</edge>
+<edge source="Charmian" target="First Guard">
+  <data key="d1">2</data>
+</edge>
+<edge source="Charmian" target="Soothsayer">
+  <data key="d1">1</data>
+</edge>
+<edge source="Charmian" target="Domitius Enobarbus">
+  <data key="d1">1</data>
+</edge>
+<edge source="Charmian" target="Messenger">
+  <data key="d1">3</data>
+</edge>
+<edge source="Charmian" target="Mark Antony">
+  <data key="d1">5</data>
+</edge>
+<edge source="Charmian" target="First Attendant">
+  <data key="d1">1</data>
+</edge>
+<edge source="Charmian" target="Second Attendant">
+  <data key="d1">1</data>
+</edge>
+<edge source="Charmian" target="Second Messenger">
+  <data key="d1">1</data>
+</edge>
+<edge source="Charmian" target="Eros">
+  <data key="d1">2</data>
+</edge>
+<edge source="Charmian" target="Soldier">
+  <data key="d1">1</data>
+</edge>
+<edge source="Charmian" target="Diomedes">
+  <data key="d1">1</data>
+</edge>
+<edge source="Charmian" target="Proculeius">
+  <data key="d1">1</data>
+</edge>
+<edge source="Charmian" target="Gallus">
+  <data key="d1">1</data>
+</edge>
+<edge source="Charmian" target="Dolabella">
+  <data key="d1">1</data>
+</edge>
+<edge source="Charmian" target="Octavius Caesar">
+  <data key="d1">1</data>
+</edge>
+<edge source="Charmian" target="Seleucus">
+  <data key="d1">1</data>
+</edge>
+<edge source="Charmian" target="Guard">
+  <data key="d1">1</data>
+</edge>
+<edge source="Charmian" target="Clown">
+  <data key="d1">1</data>
+</edge>
+<edge source="Charmian" target="Second Guard">
+  <data key="d1">1</data>
+</edge>
+<edge source="Domitius Enobarbus" target="Pompey">
+  <data key="d1">6</data>
+</edge>
+<edge source="Domitius Enobarbus" target="Mecaenas">
+  <data key="d1">1</data>
+</edge>
+<edge source="Domitius Enobarbus" target="Mark Antony">
+  <data key="d1">8</data>
+</edge>
+<edge source="Domitius Enobarbus" target="Menas">
+  <data key="d1">5</data>
+</edge>
+<edge source="Domitius Enobarbus" target="Octavia">
+  <data key="d1">4</data>
+</edge>
+<edge source="Domitius Enobarbus" target="Egyptian">
+  <data key="d1">3</data>
+</edge>
+<edge source="Domitius Enobarbus" target="Lepidus">
+  <data key="d1">4</data>
+</edge>
+<edge source="Domitius Enobarbus" target="Eros">
+  <data key="d1">1</data>
+</edge>
+<edge source="Domitius Enobarbus" target="Soothsayer">
+  <data key="d1">1</data>
+</edge>
+<edge source="Domitius Enobarbus" target="Iras">
+  <data key="d1">1</data>
+</edge>
+<edge source="Domitius Enobarbus" target="Messenger">
+  <data key="d1">3</data>
+</edge>
+<edge source="Domitius Enobarbus" target="First Attendant">
+  <data key="d1">2</data>
+</edge>
+<edge source="Domitius Enobarbus" target="Second Attendant">
+  <data key="d1">1</data>
+</edge>
+<edge source="Domitius Enobarbus" target="Second Messenger">
+  <data key="d1">1</data>
+</edge>
+<edge source="Domitius Enobarbus" target="Octavius Caesar">
+  <data key="d1">5</data>
+</edge>
+<edge source="Domitius Enobarbus" target="First Servant">
+  <data key="d1">1</data>
+</edge>
+<edge source="Domitius Enobarbus" target="Second Servant">
+  <data key="d1">1</data>
+</edge>
+<edge source="Domitius Enobarbus" target="Soldier">
+  <data key="d1">2</data>
+</edge>
+<edge source="Domitius Enobarbus" target="Scarus">
+  <data key="d1">1</data>
+</edge>
+<edge source="Domitius Enobarbus" target="Euphronius">
+  <data key="d1">1</data>
+</edge>
+<edge source="Domitius Enobarbus" target="Thyreus">
+  <data key="d1">1</data>
+</edge>
+<edge source="Domitius Enobarbus" target="First Soldier">
+  <data key="d1">1</data>
+</edge>
+<edge source="Domitius Enobarbus" target="Second Soldier">
+  <data key="d1">1</data>
+</edge>
+<edge source="Domitius Enobarbus" target="Third Soldier">
+  <data key="d1">1</data>
+</edge>
+<edge source="Iras" target="Soothsayer">
+  <data key="d1">1</data>
+</edge>
+<edge source="Iras" target="Messenger">
+  <data key="d1">1</data>
+</edge>
+<edge source="Iras" target="Mark Antony">
+  <data key="d1">3</data>
+</edge>
+<edge source="Iras" target="Second Attendant">
+  <data key="d1">1</data>
+</edge>
+<edge source="Iras" target="Second Messenger">
+  <data key="d1">1</data>
+</edge>
+<edge source="Iras" target="Proculeius">
+  <data key="d1">1</data>
+</edge>
+<edge source="Iras" target="Octavius Caesar">
+  <data key="d1">1</data>
+</edge>
+<edge source="Iras" target="Seleucus">
+  <data key="d1">1</data>
+</edge>
+<edge source="Iras" target="Second Guard">
+  <data key="d1">1</data>
+</edge>
+<edge source="Egyptian" target="Mark Antony">
+  <data key="d1">2</data>
+</edge>
+<edge source="Egyptian" target="Pompey">
+  <data key="d1">1</data>
+</edge>
+<edge source="Egyptian" target="Octavius Caesar">
+  <data key="d1">1</data>
+</edge>
+<edge source="Egyptian" target="Mecaenas">
+  <data key="d1">1</data>
+</edge>
+<edge source="Egyptian" target="Proculeius">
+  <data key="d1">1</data>
+</edge>
+<edge source="Pompey" target="Varrius">
+  <data key="d1">1</data>
+</edge>
+<edge source="Pompey" target="Second Servant">
+  <data key="d1">1</data>
+</edge>
+<edge source="Lepidus" target="Octavius Caesar">
+  <data key="d1">7</data>
+</edge>
+<edge source="Lepidus" target="Pompey">
+  <data key="d1">6</data>
+</edge>
+<edge source="Lepidus" target="Menas">
+  <data key="d1">3</data>
+</edge>
+<edge source="Lepidus" target="Mark Antony">
+  <data key="d1">6</data>
+</edge>
+<edge source="Lepidus" target="Mecaenas">
+  <data key="d1">2</data>
+</edge>
+<edge source="Lepidus" target="Second Servant">
+  <data key="d1">1</data>
+</edge>
+<edge source="Lepidus" target="Messenger">
+  <data key="d1">1</data>
+</edge>
+<edge source="Lepidus" target="Octavia">
+  <data key="d1">1</data>
+</edge>
+<edge source="Octavius Caesar" target="Pompey">
+  <data key="d1">3</data>
+</edge>
+<edge source="Octavius Caesar" target="Taurus">
+  <data key="d1">1</data>
+</edge>
+<edge source="Octavius Caesar" target="Thyreus">
+  <data key="d1">1</data>
+</edge>
+<edge source="Octavius Caesar" target="Proculeius">
+  <data key="d1">3</data>
+</edge>
+<edge source="Octavius Caesar" target="Seleucus">
+  <data key="d1">1</data>
+</edge>
+<edge source="Octavius Caesar" target="Soothsayer">
+  <data key="d1">1</data>
+</edge>
+<edge source="Octavius Caesar" target="Second Servant">
+  <data key="d1">1</data>
+</edge>
+<edge source="Octavius Caesar" target="Soldier">
+  <data key="d1">1</data>
+</edge>
+<edge source="Octavius Caesar" target="Second Guard">
+  <data key="d1">1</data>
+</edge>
+<edge source="Messenger" target="Pompey">
+  <data key="d1">2</data>
+</edge>
+<edge source="Messenger" target="Octavia">
+  <data key="d1">3</data>
+</edge>
+<edge source="Messenger" target="Soothsayer">
+  <data key="d1">1</data>
+</edge>
+<edge source="Messenger" target="Second Attendant">
+  <data key="d1">1</data>
+</edge>
+<edge source="Messenger" target="Second Messenger">
+  <data key="d1">1</data>
+</edge>
+<edge source="Messenger" target="Octavius Caesar">
+  <data key="d1">2</data>
+</edge>
+<edge source="Messenger" target="Soldier">
+  <data key="d1">2</data>
+</edge>
+<edge source="Menecrates" target="Messenger">
+  <data key="d1">1</data>
+</edge>
+<edge source="Menecrates" target="Pompey">
+  <data key="d1">1</data>
+</edge>
+<edge source="Menecrates" target="Varrius">
+  <data key="d1">1</data>
+</edge>
+<edge source="Menas" target="Messenger">
+  <data key="d1">1</data>
+</edge>
+<edge source="Menas" target="Pompey">
+  <data key="d1">7</data>
+</edge>
+<edge source="Menas" target="Menecrates">
+  <data key="d1">1</data>
+</edge>
+<edge source="Menas" target="Varrius">
+  <data key="d1">1</data>
+</edge>
+<edge source="Menas" target="Octavius Caesar">
+  <data key="d1">2</data>
+</edge>
+<edge source="Menas" target="Second Servant">
+  <data key="d1">1</data>
+</edge>
+<edge source="Mardian" target="Messenger">
+  <data key="d1">1</data>
+</edge>
+<edge source="Mardian" target="Mark Antony">
+  <data key="d1">1</data>
+</edge>
+<edge source="Mardian" target="Second Guard">
+  <data key="d1">1</data>
+</edge>
+<edge source="Mardian" target="Third Guard">
+  <data key="d1">1</data>
+</edge>
+<edge source="Mecaenas" target="Octavius Caesar">
+  <data key="d1">4</data>
+</edge>
+<edge source="Mecaenas" target="Octavia">
+  <data key="d1">2</data>
+</edge>
+<edge source="Mecaenas" target="Proculeius">
+  <data key="d1">1</data>
+</edge>
+<edge source="Agrippa" target="Octavius Caesar">
+  <data key="d1">8</data>
+</edge>
+<edge source="Agrippa" target="Octavia">
+  <data key="d1">5</data>
+</edge>
+<edge source="Agrippa" target="Mark Antony">
+  <data key="d1">7</data>
+</edge>
+<edge source="Agrippa" target="Domitius Enobarbus">
+  <data key="d1">3</data>
+</edge>
+<edge source="Agrippa" target="Egyptian">
+  <data key="d1">2</data>
+</edge>
+<edge source="Agrippa" target="Lepidus">
+  <data key="d1">3</data>
+</edge>
+<edge source="Agrippa" target="Mecaenas">
+  <data key="d1">4</data>
+</edge>
+<edge source="Agrippa" target="Messenger">
+  <data key="d1">1</data>
+</edge>
+<edge source="Agrippa" target="Soldier">
+  <data key="d1">1</data>
+</edge>
+<edge source="Agrippa" target="Scarus">
+  <data key="d1">1</data>
+</edge>
+<edge source="Agrippa" target="Eros">
+  <data key="d1">1</data>
+</edge>
+<edge source="Agrippa" target="Dolabella">
+  <data key="d1">1</data>
+</edge>
+<edge source="Agrippa" target="Dercetas">
+  <data key="d1">1</data>
+</edge>
+<edge source="Agrippa" target="Proculeius">
+  <data key="d1">1</data>
+</edge>
+<edge source="Octavia" target="Octavius Caesar">
+  <data key="d1">5</data>
+</edge>
+<edge source="Octavia" target="Soothsayer">
+  <data key="d1">1</data>
+</edge>
+<edge source="Silius" target="Ventidius">
+  <data key="d1">5</data>
+</edge>
+<edge source="Eros" target="Lepidus">
+  <data key="d1">2</data>
+</edge>
+<edge source="Eros" target="Pompey">
+  <data key="d1">4</data>
+</edge>
+<edge source="Eros" target="Mark Antony">
+  <data key="d1">26</data>
+</edge>
+<edge source="Eros" target="Iras">
+  <data key="d1">1</data>
+</edge>
+<edge source="Eros" target="Soldier">
+  <data key="d1">2</data>
+</edge>
+<edge source="Eros" target="Scarus">
+  <data key="d1">1</data>
+</edge>
+<edge source="Eros" target="Mardian">
+  <data key="d1">1</data>
+</edge>
+<edge source="Eros" target="First Guard">
+  <data key="d1">1</data>
+</edge>
+<edge source="Eros" target="Second Guard">
+  <data key="d1">1</data>
+</edge>
+<edge source="Eros" target="Third Guard">
+  <data key="d1">1</data>
+</edge>
+<edge source="Canidius" target="Mark Antony">
+  <data key="d1">3</data>
+</edge>
+<edge source="Canidius" target="Pompey">
+  <data key="d1">1</data>
+</edge>
+<edge source="Canidius" target="Soldier">
+  <data key="d1">1</data>
+</edge>
+<edge source="Canidius" target="Messenger">
+  <data key="d1">1</data>
+</edge>
+<edge source="Canidius" target="Domitius Enobarbus">
+  <data key="d1">3</data>
+</edge>
+<edge source="Canidius" target="Cleopatra">
+  <data key="d1">1</data>
+</edge>
+<edge source="Canidius" target="Scarus">
+  <data key="d1">1</data>
+</edge>
+<edge source="Soldier" target="Taurus">
+  <data key="d1">1</data>
+</edge>
+<edge source="Euphronius" target="Octavius Caesar">
+  <data key="d1">1</data>
+</edge>
+<edge source="Euphronius" target="Thyreus">
+  <data key="d1">2</data>
+</edge>
+<edge source="Euphronius" target="Mark Antony">
+  <data key="d1">1</data>
+</edge>
+<edge source="Euphronius" target="First Attendant">
+  <data key="d1">1</data>
+</edge>
+<edge source="Diomedes" target="Mark Antony">
+  <data key="d1">2</data>
+</edge>
+<edge source="Diomedes" target="Eros">
+  <data key="d1">1</data>
+</edge>
+<edge source="Diomedes" target="Mardian">
+  <data key="d1">1</data>
+</edge>
+<edge source="Diomedes" target="First Guard">
+  <data key="d1">1</data>
+</edge>
+<edge source="Diomedes" target="Second Guard">
+  <data key="d1">1</data>
+</edge>
+<edge source="Diomedes" target="Third Guard">
+  <data key="d1">1</data>
+</edge>
+<edge source="Diomedes" target="Iras">
+  <data key="d1">1</data>
+</edge>
+<edge source="Proculeius" target="Seleucus">
+  <data key="d1">1</data>
+</edge>
+<edge source="Proculeius" target="Second Guard">
+  <data key="d1">1</data>
+</edge>
+<edge source="Dolabella" target="Octavius Caesar">
+  <data key="d1">4</data>
+</edge>
+<edge source="Dolabella" target="Proculeius">
+  <data key="d1">3</data>
+</edge>
+<edge source="Dolabella" target="Second Guard">
+  <data key="d1">1</data>
+</edge>
+<edge source="Dolabella" target="Euphronius">
+  <data key="d1">1</data>
+</edge>
+<edge source="Dolabella" target="Thyreus">
+  <data key="d1">1</data>
+</edge>
+<edge source="Dolabella" target="Mecaenas">
+  <data key="d1">1</data>
+</edge>
+<edge source="Dolabella" target="Egyptian">
+  <data key="d1">1</data>
+</edge>
+<edge source="Dolabella" target="Gallus">
+  <data key="d1">1</data>
+</edge>
+<edge source="Dolabella" target="Iras">
+  <data key="d1">1</data>
+</edge>
+<edge source="Dolabella" target="Seleucus">
+  <data key="d1">1</data>
+</edge>
+<edge source="Dolabella" target="Guard">
+  <data key="d1">1</data>
+</edge>
+<edge source="Dolabella" target="First Guard">
+  <data key="d1">1</data>
+</edge>
+<edge source="Dercetas" target="Mark Antony">
+  <data key="d1">2</data>
+</edge>
+<edge source="Dercetas" target="Eros">
+  <data key="d1">1</data>
+</edge>
+<edge source="Dercetas" target="Mardian">
+  <data key="d1">1</data>
+</edge>
+<edge source="Dercetas" target="First Guard">
+  <data key="d1">1</data>
+</edge>
+<edge source="Dercetas" target="Second Guard">
+  <data key="d1">1</data>
+</edge>
+<edge source="Dercetas" target="Third Guard">
+  <data key="d1">1</data>
+</edge>
+<edge source="Dercetas" target="Diomedes">
+  <data key="d1">1</data>
+</edge>
+<edge source="Dercetas" target="Octavius Caesar">
+  <data key="d1">1</data>
+</edge>
+<edge source="Dercetas" target="Dolabella">
+  <data key="d1">1</data>
+</edge>
+<edge source="Dercetas" target="Mecaenas">
+  <data key="d1">1</data>
+</edge>
+<edge source="Dercetas" target="Egyptian">
+  <data key="d1">1</data>
+</edge>
+<edge source="Dercetas" target="Proculeius">
+  <data key="d1">1</data>
+</edge>
+<edge source="Gallus" target="Octavius Caesar">
+  <data key="d1">2</data>
+</edge>
+<edge source="Gallus" target="Guard">
+  <data key="d1">1</data>
+</edge>
+<edge source="Gallus" target="Proculeius">
+  <data key="d1">1</data>
+</edge>
+<edge source="Gallus" target="Iras">
+  <data key="d1">1</data>
+</edge>
+<edge source="Gallus" target="Seleucus">
+  <data key="d1">1</data>
+</edge>
+<edge source="Gallus" target="Second Guard">
+  <data key="d1">1</data>
+</edge>
+<edge source="Guard" target="Proculeius">
+  <data key="d1">1</data>
+</edge>
+<edge source="Guard" target="Iras">
+  <data key="d1">1</data>
+</edge>
+<edge source="Guard" target="Octavius Caesar">
+  <data key="d1">1</data>
+</edge>
+<edge source="Guard" target="Seleucus">
+  <data key="d1">1</data>
+</edge>
+<edge source="Guard" target="Second Guard">
+  <data key="d1">1</data>
+</edge>
+<edge source="Second Guard" target="Third Guard">
+  <data key="d1">1</data>
+</edge>
+<edge source="Second Guard" target="Seleucus">
+  <data key="d1">1</data>
+</edge>
+<edge source="First Guard" target="Mark Antony">
+  <data key="d1">1</data>
+</edge>
+<edge source="First Guard" target="Mardian">
+  <data key="d1">1</data>
+</edge>
+<edge source="First Guard" target="Second Guard">
+  <data key="d1">2</data>
+</edge>
+<edge source="First Guard" target="Third Guard">
+  <data key="d1">1</data>
+</edge>
+<edge source="First Guard" target="Proculeius">
+  <data key="d1">1</data>
+</edge>
+<edge source="First Guard" target="Gallus">
+  <data key="d1">1</data>
+</edge>
+<edge source="First Guard" target="Iras">
+  <data key="d1">1</data>
+</edge>
+<edge source="First Guard" target="Octavius Caesar">
+  <data key="d1">1</data>
+</edge>
+<edge source="First Guard" target="Seleucus">
+  <data key="d1">1</data>
+</edge>
+<edge source="First Guard" target="Guard">
+  <data key="d1">1</data>
+</edge>
+<edge source="Attendant" target="Philo">
+  <data key="d1">1</data>
+</edge>
+<edge source="Attendant" target="Cleopatra">
+  <data key="d1">2</data>
+</edge>
+<edge source="Attendant" target="Mark Antony">
+  <data key="d1">2</data>
+</edge>
+<edge source="Attendant" target="Demetrius">
+  <data key="d1">1</data>
+</edge>
+<edge source="Attendant" target="Domitius Enobarbus">
+  <data key="d1">1</data>
+</edge>
+<edge source="Attendant" target="Euphronius">
+  <data key="d1">1</data>
+</edge>
+<edge source="Attendant" target="Thyreus">
+  <data key="d1">1</data>
+</edge>
+<edge source="Attendant" target="First Attendant">
+  <data key="d1">1</data>
+</edge>
+<edge source="Demetrius" target="Philo">
+  <data key="d1">1</data>
+</edge>
+<edge source="Demetrius" target="Mark Antony">
+  <data key="d1">1</data>
+</edge>
+<edge source="First Attendant" target="Soothsayer">
+  <data key="d1">1</data>
+</edge>
+<edge source="First Attendant" target="Iras">
+  <data key="d1">1</data>
+</edge>
+<edge source="First Attendant" target="Messenger">
+  <data key="d1">1</data>
+</edge>
+<edge source="First Attendant" target="Mark Antony">
+  <data key="d1">2</data>
+</edge>
+<edge source="First Attendant" target="Second Attendant">
+  <data key="d1">1</data>
+</edge>
+<edge source="First Attendant" target="Second Messenger">
+  <data key="d1">1</data>
+</edge>
+<edge source="First Attendant" target="Thyreus">
+  <data key="d1">1</data>
+</edge>
+<edge source="Second Attendant" target="Soothsayer">
+  <data key="d1">1</data>
+</edge>
+<edge source="Second Attendant" target="Second Messenger">
+  <data key="d1">1</data>
+</edge>
+<edge source="Second Messenger" target="Soothsayer">
+  <data key="d1">1</data>
+</edge>
+<edge source="Attendants" target="Cleopatra">
+  <data key="d1">1</data>
+</edge>
+<edge source="Attendants" target="Charmian">
+  <data key="d1">1</data>
+</edge>
+<edge source="Attendants" target="Mardian">
+  <data key="d1">1</data>
+</edge>
+<edge source="Attendants" target="Messenger">
+  <data key="d1">1</data>
+</edge>
+<edge source="First Servant" target="Second Servant">
+  <data key="d1">1</data>
+</edge>
+<edge source="First Servant" target="Mark Antony">
+  <data key="d1">1</data>
+</edge>
+<edge source="First Servant" target="Lepidus">
+  <data key="d1">1</data>
+</edge>
+<edge source="First Servant" target="Pompey">
+  <data key="d1">1</data>
+</edge>
+<edge source="First Servant" target="Menas">
+  <data key="d1">1</data>
+</edge>
+<edge source="First Servant" target="Octavius Caesar">
+  <data key="d1">1</data>
+</edge>
+<edge source="First Soldier" target="Second Soldier">
+  <data key="d1">2</data>
+</edge>
+<edge source="First Soldier" target="Third Soldier">
+  <data key="d1">2</data>
+</edge>
+<edge source="First Soldier" target="Fourth Soldier">
+  <data key="d1">1</data>
+</edge>
+<edge source="Second Soldier" target="Third Soldier">
+  <data key="d1">2</data>
+</edge>
+<edge source="Fourth Soldier" target="Second Soldier">
+  <data key="d1">1</data>
+</edge>
+<edge source="Fourth Soldier" target="Third Soldier">
+  <data key="d1">1</data>
+</edge>
+<edge source="Captain" target="Mark Antony">
+  <data key="d1">1</data>
+</edge>
+<edge source="Captain" target="Cleopatra">
+  <data key="d1">1</data>
+</edge>
+<edge source="Captain" target="Eros">
+  <data key="d1">1</data>
+</edge>
+<edge source="Captain" target="Soldier">
+  <data key="d1">1</data>
+</edge>
+<edge source="Captain" target="Charmian">
+  <data key="d1">1</data>
+</edge>
+<edge source="Clown" target="Proculeius">
+  <data key="d1">1</data>
+</edge>
+<edge source="Clown" target="Gallus">
+  <data key="d1">1</data>
+</edge>
+<edge source="Clown" target="Iras">
+  <data key="d1">1</data>
+</edge>
+<edge source="Clown" target="Dolabella">
+  <data key="d1">1</data>
+</edge>
+<edge source="Clown" target="Octavius Caesar">
+  <data key="d1">1</data>
+</edge>
+<edge source="Clown" target="Seleucus">
+  <data key="d1">1</data>
+</edge>
+<edge source="Clown" target="Guard">
+  <data key="d1">1</data>
+</edge>
+<edge source="Clown" target="First Guard">
+  <data key="d1">1</data>
+</edge>
+<edge source="Clown" target="Second Guard">
+  <data key="d1">1</data>
+</edge>
+</graph></graphml>

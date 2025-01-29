@@ -79,14 +79,6 @@ for play in plays:
     explicit_relation_counts = Counter({(original_character_map[a], original_character_map[b]): count for (a, b), count in explicit_relation_counts.items() if a in original_character_map and b in original_character_map})
     implicit_relation_counts = Counter({(original_character_map[a], original_character_map[b]): count for (a, b), count in implicit_relation_counts.items() if a in original_character_map and b in original_character_map})
     total_counts = explicit_relation_counts + implicit_relation_counts
-    for key, _ in sorted(total_counts.items(), key=lambda item: item[1], reverse=False):
-        print("KEY: ", key)
-        print("TOTAL: ", total_counts[key])
-        print("EXPLICIT: ", explicit_relation_counts[key])
-        print("IMPLICIT: ", implicit_relation_counts[key])
-        print("\n"*2)
-
-    print(scenes["character"].unique()) # print each scene and their explicit entities mentioned
 
     # Visualize character relations as signed weighted graph
     G = nx.DiGraph()
@@ -102,7 +94,7 @@ for play in plays:
         filter_menu=True,
         )
     for node in G.nodes():
-        viz.add_node(node, label=node, size=G.degree(node) * 2)
+        viz.add_node(node, label=node, size=G.degree(node)*2) # scale by 2 for node visualization
     viz.from_nx(G)
     viz.set_options("""
         {
@@ -127,7 +119,8 @@ for play in plays:
         """)
 
     play_title = play[:play.find(".")]
-    viz.show(f"viz/{play_title}.html")
+    viz.show(f"viz/{play_title}.html") # Generate interactive visualizations
+    nx.write_graphml(G, f"exports/graphml/{play_title}.graphml") # Export .graphml files for Gephi, etc.
     print(f"{play_title} done processing...")
 
 print(f"\nAll {len(plays)} plays are done processing.\n")
