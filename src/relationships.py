@@ -88,7 +88,7 @@ for play in plays:
 
     print(scenes["character"].unique()) # print each scene and their explicit entities mentioned
 
-    # Visualize character relations as signed weighed graph
+    # Visualize character relations as signed weighted graph
     G = nx.DiGraph()
 
     for relation, weight in total_counts.items():
@@ -102,8 +102,29 @@ for play in plays:
         filter_menu=True,
         )
     for node in G.nodes():
-        viz.add_node(node, label=node, size=G.degree(node))
+        viz.add_node(node, label=node, size=G.degree(node) * 2)
     viz.from_nx(G)
+    viz.set_options("""
+        {
+            "nodes": {
+                "font": {
+                    "size": 50
+                }
+            },
+            "physics": {
+                "stabilization": {
+                    "enabled": true,
+                    "iterations": 300
+                },
+                "barnesHut": {
+                    "gravitationalConstant": -80000,
+                    "centralGravity": 0.3,
+                    "springLength": 95,
+                    "springConstant": 0.04
+                }
+            }
+        }
+        """)
 
     play_title = play[:play.find(".")]
     viz.show(f"viz/{play_title}.html")

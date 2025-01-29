@@ -61,8 +61,8 @@ Unnamed: 0,play_name,genre,character,act,scene,sentence,text,sex,sentiment
 88028,Julius Caesar,Tragedy,Flavius,1,1,60,See whether their basest metal be not moved;,male,0.0
 88029,Julius Caesar,Tragedy,Flavius,1,1,61,They vanish tongue-tied in their guiltiness.,male,0.0
 88030,Julius Caesar,Tragedy,Flavius,1,1,62,Go you down that way towards the Capitol;,male,-0.16
-88031,Julius Caesar,Tragedy,This Way Will I,1,1,63,"disrobe the images,",male,0.0
-88032,Julius Caesar,Tragedy,This Way Will I,1,1,64,If you do find them deck'd with ceremonies.,male,0.0
+88031,Julius Caesar,Tragedy,Flavius,1,1,63,"This way will I. Disrobe the images,",male,0.0
+88032,Julius Caesar,Tragedy,Flavius,1,1,64,If you do find them deck'd with ceremonies.,male,0.0
 88033,Julius Caesar,Tragedy,Marullus,1,1,65,May we do so?,male,0.0
 88034,Julius Caesar,Tragedy,Marullus,1,1,66,You know it is the feast of Lupercal.,male,0.0
 88035,Julius Caesar,Tragedy,Flavius,1,1,67,It is no matter; let no images,male,0.0
