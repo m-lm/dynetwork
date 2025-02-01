@@ -1,13 +1,13 @@
 import spacy
-from spacytextblob.spacytextblob import SpacyTextBlob
 import pandas as pd
-import numpy as np
 import networkx as nx
 from pyvis.network import Network
 from collections import Counter
 import os
 import string
 import itertools
+import json
+import time
 
 # Setup
 nlp = spacy.load("en_core_web_sm")
@@ -16,7 +16,9 @@ plays = sorted(os.listdir("data/plays"))
 
 def extract_relationships():
     # Read each play CSV and extract relationships
+    cumulative_elapsed_time = 0
     for play in plays:
+        start_time = time.time()
         if play[0].isalpha():
             filename = os.path.join("data/plays", play)
         else:
@@ -41,6 +43,7 @@ def extract_relationships():
         scenes = df.groupby(["act", "scene"])
         explicit_relation_counts = Counter()
         implicit_relation_counts = Counter()
+        shadow_dict = {} # Create a shadow dict to keep track of temporal info during the loop about the relation count
         for (act, scene), lines in scenes:
             scene_chars = [name for name in lines["character"].unique() if name != "All"]
             associations = [] # used to keep track of explicit relations in a scene when checking implicit relations
@@ -73,17 +76,23 @@ def extract_relationships():
                     associations.append(unordered_pair)
                     implicit_relation_counts[unordered_pair] += 1
 
+            # Update temporal info graph snapshots of relations and their weights for each scene
+            shadow_exp_rel_counts = Counter({(original_character_map[a], original_character_map[b]): count for (a, b), count in explicit_relation_counts.items() if a in original_character_map and b in original_character_map})
+            shadow_imp_rel_counts = Counter({(original_character_map[a], original_character_map[b]): count for (a, b), count in implicit_relation_counts.items() if a in original_character_map and b in original_character_map})
+            shadow_total_counts = shadow_exp_rel_counts + shadow_imp_rel_counts
+            shadow_dict[(act, scene)] = shadow_total_counts
+
         # Convert lowercase normalized names to original proper case and check if gathered names are in the list of play characters who participate
         # Note this primarily only works for plays as we have a convenient list of characters in the play and the worldbuilding does not cross this boundary.
         # However, longer more complex works like epic fantasy or scifi should include those nonpresent 3rd parties mentioned even if they do not actively participate. This is for worldbulding reasons.
         explicit_relation_counts = Counter({(original_character_map[a], original_character_map[b]): count for (a, b), count in explicit_relation_counts.items() if a in original_character_map and b in original_character_map})
         implicit_relation_counts = Counter({(original_character_map[a], original_character_map[b]): count for (a, b), count in implicit_relation_counts.items() if a in original_character_map and b in original_character_map})
-        total_counts = explicit_relation_counts + implicit_relation_counts
+        final_total_counts = explicit_relation_counts + implicit_relation_counts
 
         # Visualize character relations as signed weighted graph
         G = nx.DiGraph()
 
-        for relation, weight in total_counts.items():
+        for relation, weight in final_total_counts.items():
             G.add_edge(relation[0], relation[1], weight=weight)
 
         viz = Network(
@@ -118,8 +127,21 @@ def extract_relationships():
             }
             """)
 
+        # Generate interactive static Pyvis graph visualizations, and export static graph to .graphml
         play_title = play[:play.find(".")]
-        viz.show(f"viz/{play_title}.html") # Generate interactive visualizations
-        nx.write_graphml(G, f"exports/graphml/{play_title}.graphml") # Export .graphml files for Gephi, etc.
-        print(f"{play_title} done processing...\n")
-    print(f"\nAll {len(plays)} plays are done processing.\n")
+        viz.show(f"viz/{play_title}.html")
+        nx.write_graphml(G, f"exports/graphml/{play_title}.graphml")
+
+        # Export temporal graph snapshots to JSON files after converting shadow_dict to JSON-friendly format
+        graph_snapshot = {
+            str(tuple(int(t) for t in time_tuple)): {str(inner_k): inner_v for inner_k, inner_v in inner_relations.items()} for time_tuple, inner_relations in shadow_dict.items()
+        }
+        with open(f"exports/snapshots/{play_title} Temporal-Snapshot.json", "w") as f:
+            json.dump(graph_snapshot, f, indent=4)
+
+        end_time = time.time()
+        elapsed_time = round(end_time - start_time, 1)
+        cumulative_elapsed_time += elapsed_time
+        print(f"{play_title} done processing... ({elapsed_time}s)\n")
+
+    print(f"\nAll {len(plays)} plays are done processing. ({cumulative_elapsed_time}s)\n")
