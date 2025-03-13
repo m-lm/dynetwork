@@ -48,7 +48,7 @@ importlib_metadata==8.6.1
 ipython==8.12.3
 itsdangerous==2.2.0
 jedi==0.19.2
-Jinja2==3.1.5
+Jinja2==3.1.6
 joblib==1.4.2
 jsonpickle==4.0.1
 jsonschema==4.23.0
