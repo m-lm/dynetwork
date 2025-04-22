@@ -85,6 +85,9 @@
 <node id="Lion">
   <data key="d0">10</data>
 </node>
+<node id="Hernia">
+  <data key="d0">10</data>
+</node>
 <edge source="Hippolyta" target="Theseus">
   <data key="d1">5</data>
 </edge>
@@ -205,6 +208,9 @@
 <edge source="Hermia" target="Puck">
   <data key="d1">3</data>
 </edge>
+<edge source="Hermia" target="Hernia">
+  <data key="d1">1</data>
+</edge>
 <edge source="Hermia" target="Peaseblossom">
   <data key="d1">1</data>
 </edge>
@@ -252,6 +258,9 @@
 </edge>
 <edge source="Demetrius" target="Titania">
   <data key="d1">4</data>
+</edge>
+<edge source="Demetrius" target="Hernia">
+  <data key="d1">1</data>
 </edge>
 <edge source="Demetrius" target="Peaseblossom">
   <data key="d1">1</data>
@@ -324,6 +333,9 @@
 </edge>
 <edge source="Helena" target="Titania">
   <data key="d1">3</data>
+</edge>
+<edge source="Helena" target="Hernia">
+  <data key="d1">1</data>
 </edge>
 <edge source="Helena" target="Peaseblossom">
   <data key="d1">1</data>
@@ -758,6 +770,15 @@
   <data key="d1">1</data>
 </edge>
 <edge source="Lion" target="Titania">
+  <data key="d1">1</data>
+</edge>
+<edge source="Hernia" target="Oberon">
+  <data key="d1">1</data>
+</edge>
+<edge source="Hernia" target="Puck">
+  <data key="d1">1</data>
+</edge>
+<edge source="Hernia" target="Lysander">
   <data key="d1">1</data>
 </edge>
 </graph></graphml>

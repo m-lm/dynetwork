@@ -133,6 +133,9 @@
 <node id="First Commoner">
   <data key="d0">10</data>
 </node>
+<node id="This Way Will I">
+  <data key="d0">10</data>
+</node>
 <node id="Citizens">
   <data key="d0">10</data>
 </node>
@@ -214,10 +217,16 @@
 <edge source="Caesar" target="Popilius">
   <data key="d1">1</data>
 </edge>
+<edge source="Second Commoner" target="This Way Will I">
+  <data key="d1">1</data>
+</edge>
 <edge source="Flavius" target="Marullus">
   <data key="d1">1</data>
 </edge>
 <edge source="Flavius" target="Second Commoner">
+  <data key="d1">1</data>
+</edge>
+<edge source="Flavius" target="This Way Will I">
   <data key="d1">1</data>
 </edge>
 <edge source="Calpurnia" target="Decius Brutus">
@@ -608,6 +617,9 @@
   <data key="d1">1</data>
 </edge>
 <edge source="Marullus" target="Second Commoner">
+  <data key="d1">1</data>
+</edge>
+<edge source="Marullus" target="This Way Will I">
   <data key="d1">1</data>
 </edge>
 <edge source="Cinna" target="Metellus Cimber">
@@ -1067,6 +1079,9 @@
   <data key="d1">1</data>
 </edge>
 <edge source="First Commoner" target="Second Commoner">
+  <data key="d1">1</data>
+</edge>
+<edge source="First Commoner" target="This Way Will I">
   <data key="d1">1</data>
 </edge>
 <edge source="Citizens" target="First Citizen">

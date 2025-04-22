@@ -37,7 +37,6 @@ def extract_relationships():
 
             # Extract nonempty entity sets for sentence texts
             df["entities"] = df["text"].apply(lambda x: [ent.text.translate(str.maketrans("", "", string.punctuation)) for ent in nlp(x).ents if ent.label_ == "PERSON"]).to_list()
-            df_filtered = df[df["entities"].apply(len) > 0]
 
             # Per scene, get scene character cast and first check for explicit mentions.
             # Then, move on to implicit relations from scene associations, making sure not to double up
