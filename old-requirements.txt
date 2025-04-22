@@ -48,7 +48,7 @@ importlib_metadata==8.6.1
 ipython==8.12.3
 itsdangerous==2.2.0
 jedi==0.19.2
-Jinja2==3.1.5
+Jinja2==3.1.6
 joblib==1.4.2
 jsonpickle==4.0.1
 jsonschema==4.23.0
@@ -140,7 +140,7 @@ torch==2.5.1
 tornado==6.4.2
 tqdm==4.67.1
 traitlets==5.14.3
-transformers==4.36.2
+transformers==4.48.0
 typer==0.15.1
 typing_extensions==4.12.2
 tzdata==2024.2
